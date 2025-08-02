@@ -925,21 +925,29 @@ function updateUI() {
 
 // Utilitário para renderização de matemática
 function renderMathInElement(element) {
-    if (typeof window.renderMathInElement !== "undefined" && window.katex) {
-        try {
-            window.renderMathInElement(element, {
-                delimiters: [
-                    { left: "$$", right: "$$", display: true },
-                    { left: "$", right: "$", display: false },
-                    { left: "\\[", right: "\\]", display: true },
-                    { left: "\\(", right: "\\)", display: false },
-                ],
-                throwOnError: false,
-                errorColor: "#cc0000",
-                strict: false,
-            });
-        } catch (error) {
-            console.warn("Erro ao renderizar matemática:", error);
+    // Aguarda o carregamento completo do KaTeX
+    const attemptRender = () => {
+        if (window.katex && window.renderMathInElement) {
+            try {
+                window.renderMathInElement(element, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false },
+                        { left: "\\[", right: "\\]", display: true },
+                        { left: "\\(", right: "\\)", display: false },
+                    ],
+                    throwOnError: false,
+                    errorColor: "#cc0000",
+                    strict: false,
+                });
+            } catch (error) {
+                console.warn("Erro ao renderizar matemática:", error);
+            }
+        } else {
+            // Tenta novamente após um breve delay
+            setTimeout(attemptRender, 100);
         }
-    }
+    };
+    
+    attemptRender();
 }
