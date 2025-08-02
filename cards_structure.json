@@ -1,0 +1,54 @@
+{
+    "metadata": {
+        "version": "1.0",
+        "totalCards": 37,
+        "lastUpdated": "2025-08-02",
+        "categories": {
+            "permutacao": {
+                "name": "Permutação",
+                "description": "Arranjos onde usamos todos os elementos disponíveis",
+                "icon": "🔄",
+                "color": "#667eea"
+            },
+            "arranjo": {
+                "name": "Arranjo", 
+                "description": "Seleção e ordenação de elementos (ordem importa)",
+                "icon": "📊",
+                "color": "#48bb78"
+            },
+            "combinacao": {
+                "name": "Combinação",
+                "description": "Seleção de elementos (ordem não importa)",
+                "icon": "🎯",
+                "color": "#ed8936"
+            },
+            "principios": {
+                "name": "Princípios",
+                "description": "Princípios fundamentais de contagem",
+                "icon": "⚡",
+                "color": "#9f7aea"
+            }
+        },
+        "difficulties": {
+            "basico": {
+                "name": "Básico",
+                "description": "Conceitos fundamentais e fórmulas básicas",
+                "icon": "🟢",
+                "color": "#48bb78"
+            },
+            "intermediario": {
+                "name": "Intermediário", 
+                "description": "Aplicações práticas e cálculos mais complexos",
+                "icon": "🟡",
+                "color": "#ed8936"
+            },
+            "avancado": {
+                "name": "Avançado",
+                "description": "Conceitos avançados e problemas desafiadores",
+                "icon": "🔴", 
+                "color": "#e53e3e"
+            }
+        }
+    },
+    "cards": []
+}

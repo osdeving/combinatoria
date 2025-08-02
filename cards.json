@@ -1,487 +1,547 @@
-[
-    {
-        "id": 1,
-        "type": "exemplo",
-        "category": "permutacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "anagrama",
-            "fatorial"
-        ],
-        "q": "Quantos anagramas diferentes a palavra 'ROMA' possui?",
-        "a": "$4! = 24$",
-        "explanation": "**Natureza do problema:** Permutação simples - a ordem das letras importa (ROMA ≠ AMOR) e não há repetição de letras. **Fórmula usada:** $P(n) = n!$. Como ROMA tem 4 letras distintas, aplicamos: $P(4) = 4! = 4 \\times 3 \\times 2 \\times 1 = 24$ anagramas diferentes."
+{
+    "metadata": {
+        "version": "1.0",
+        "totalCards": 37,
+        "lastUpdated": "2025-08-02",
+        "categories": {
+            "permutacao": {
+                "name": "Permutação",
+                "description": "Arranjos onde usamos todos os elementos disponíveis",
+                "icon": "🔄",
+                "color": "#667eea",
+                "count": 12
+            },
+            "arranjo": {
+                "name": "Arranjo",
+                "description": "Seleção e ordenação de elementos (ordem importa)",
+                "icon": "📊",
+                "color": "#48bb78",
+                "count": 13
+            },
+            "combinacao": {
+                "name": "Combinação",
+                "description": "Seleção de elementos (ordem não importa)",
+                "icon": "🎯",
+                "color": "#ed8936",
+                "count": 12
+            },
+            "principios": {
+                "name": "Princípios",
+                "description": "Princípios fundamentais de contagem",
+                "icon": "⚡",
+                "color": "#9f7aea",
+                "count": 0
+            }
+        },
+        "difficulties": {
+            "basico": {
+                "name": "Básico",
+                "description": "Conceitos fundamentais e fórmulas básicas",
+                "icon": "🟢",
+                "color": "#48bb78",
+                "count": 34
+            },
+            "intermediario": {
+                "name": "Intermediário",
+                "description": "Aplicações práticas e cálculos mais complexos",
+                "icon": "🟡",
+                "color": "#ed8936",
+                "count": 3
+            },
+            "avancado": {
+                "name": "Avançado",
+                "description": "Conceitos avançados e problemas desafiadores",
+                "icon": "🔴",
+                "color": "#e53e3e",
+                "count": 0
+            }
+        }
     },
-    {
-        "id": 2,
-        "type": "formula",
-        "category": "permutacao",
-        "difficulty": "basico",
-        "tags": [
-            "formula-fundamental",
-            "fatorial"
-        ],
-        "q": "$A(n, p) = \\dfrac{n!}{(n - p)!}$",
-        "a": "Fórmula do arranjo simples",
-        "explanation": "O arranjo simples calcula o número de maneiras de escolher e ordenar $p$ elementos de um conjunto de $n$ elementos. A ordem importa e não há repetição. Exemplo: $A(5,3) = \\dfrac{5!}{(5-3)!} = \\dfrac{5!}{2!} = \\dfrac{120}{2} = 60$"
-    },
-    {
-        "id": 3,
-        "type": "formula",
-        "category": "arranjo",
-        "difficulty": "basico",
-        "tags": [
-            "formula-fundamental",
-            "fatorial"
-        ],
-        "q": "$C(n, p) = \\dfrac{n!}{p!(n - p)!}$",
-        "a": "Fórmula da combinação simples",
-        "explanation": "A combinação simples calcula o número de maneiras de escolher $p$ elementos de um conjunto de $n$ elementos, onde a ordem não importa. É o arranjo dividido pelas permutações dos elementos escolhidos: $C(n,p) = \\dfrac{A(n,p)}{p!}$"
-    },
-    {
-        "id": 4,
-        "type": "formula",
-        "category": "arranjo",
-        "difficulty": "basico",
-        "tags": [
-            "formula-fundamental",
-            "com-repeticao"
-        ],
-        "q": "$n^p$",
-        "a": "Fórmula do arranjo com repetição",
-        "explanation": "Quando temos $n$ opções para cada uma das $p$ posições e podemos repetir elementos, usamos $n^p$. Exemplo: senhas de 3 dígitos com números de 0 a 9: $10^3 = 1000$ possibilidades."
-    },
-    {
-        "id": 5,
-        "type": "exemplo",
-        "category": "combinacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "subconjuntos"
-        ],
-        "q": "Quantos subconjuntos de tamanho 2 posso formar de um conjunto com 4 elementos?",
-        "a": "$C(4,2) = 6$",
-        "explanation": "**Natureza do problema:** Combinação simples - a ordem não importa (escolher {a,b} é igual a {b,a}) e não há repetição. **Fórmula usada:** $C(n,p) = \\dfrac{n!}{p!(n-p)!}$. Aplicando: $C(4,2) = \\dfrac{4!}{2!(4-2)!} = \\dfrac{4!}{2! \\cdot 2!} = \\dfrac{24}{4} = 6$. Se o conjunto for $\\{a,b,c,d\\}$, os subconjuntos são: $\\{a,b\\}, \\{a,c\\}, \\{a,d\\}, \\{b,c\\}, \\{b,d\\}, \\{c,d\\}$."
-    },
-    {
-        "id": 6,
-        "type": "exemplo",
-        "category": "arranjo",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "com-repeticao",
-            "senhas"
-        ],
-        "q": "Quantas senhas de 3 dígitos posso formar com os números de 0 a 9? (com repetição)",
-        "a": "$10^3 = 1000$",
-        "explanation": "**Natureza do problema:** Arranjo com repetição - a ordem importa (123 ≠ 321) e a repetição é permitida (pode usar 000, 111, etc.). **Fórmula usada:** $n^p$ onde $n$ é o número de opções e $p$ é o número de posições. Temos 10 opções (0 a 9) para cada uma das 3 posições: $10^3 = 10 \\times 10 \\times 10 = 1000$ senhas possíveis (de 000 até 999)."
-    },
-    {
-        "id": 7,
-        "type": "dica",
-        "category": "arranjo",
-        "difficulty": "basico",
-        "tags": [
-            "metodologia",
-            "com-repeticao",
-            "fatorial"
-        ],
-        "q": "Arranjo simples: $A(n, p) = \\dfrac{n!}{(n - p)!}$",
-        "a": "Use quando a ordem importa e não há repetição",
-        "explanation": "Dica prática: se você está escolhendo elementos E a ordem em que os escolhe faz diferença (como cargos diferentes ou posições em uma fila), use arranjo simples. A fórmula 'desconta' as posições não utilizadas dividindo por $(n-p)!$."
-    },
-    {
-        "id": 8,
-        "type": "exemplo",
-        "category": "combinacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "com-repeticao",
-            "sem-repeticao"
-        ],
-        "q": "Quantas combinações sem repetição são possíveis com 5 elementos escolhendo 3?",
-        "a": "$C(5,3) = 10$",
-        "explanation": "**Natureza do problema:** Combinação simples - a ordem não importa e não há repetição de elementos. **Fórmula usada:** $C(n,p) = \\dfrac{n!}{p!(n-p)!}$. Calculamos: $C(5,3) = \\dfrac{5!}{3!(5-3)!} = \\dfrac{5!}{3! \\cdot 2!} = \\dfrac{120}{6 \\cdot 2} = \\dfrac{120}{12} = 10$. Se o conjunto for $\\{1,2,3,4,5\\}$, as 10 combinações são: $\\{1,2,3\\}, \\{1,2,4\\}, \\{1,2,5\\}, \\{1,3,4\\}, \\{1,3,5\\}, \\{1,4,5\\}, \\{2,3,4\\}, \\{2,3,5\\}, \\{2,4,5\\}, \\{3,4,5\\}$."
-    },
-    {
-        "id": 9,
-        "type": "formula",
-        "category": "permutacao",
-        "difficulty": "basico",
-        "tags": [
-            "formula-fundamental",
-            "fatorial"
-        ],
-        "q": "$P(n) = n!$",
-        "a": "Fórmula da permutação simples",
-        "explanation": "A permutação simples é o caso especial do arranjo onde usamos todos os elementos ($p = n$). Por isso $A(n,n) = \\dfrac{n!}{(n-n)!} = \\dfrac{n!}{0!} = \\dfrac{n!}{1} = n!$. É o número de maneiras de ordenar $n$ elementos distintos."
-    },
-    {
-        "id": 10,
-        "type": "formula",
-        "category": "permutacao",
-        "difficulty": "basico",
-        "tags": [
-            "formula-fundamental",
-            "com-repeticao",
-            "fatorial"
-        ],
-        "q": "$\\dfrac{n!}{r_1! r_2! ... r_k!}$",
-        "a": "Fórmula da permutação com repetição",
-        "explanation": "Quando temos $n$ elementos onde alguns se repetem, dividimos o fatorial total pelos fatoriais das repetições. Exemplo: BANANA tem 6 letras, com 3 A's, 2 N's e 1 B: $\\dfrac{6!}{3! \\cdot 2! \\cdot 1!} = \\dfrac{720}{6 \\cdot 2 \\cdot 1} = 60$ anagramas."
-    },
-    {
-        "id": 11,
-        "type": "exemplo",
-        "category": "arranjo",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "conceitos"
-        ],
-        "q": "Qual a diferença entre arranjo e combinação?",
-        "a": "Arranjo considera a ordem, combinação não.",
-        "explanation": "**Diferença fundamental:** ARRANJO = ordem importa; COMBINAÇÃO = ordem não importa. **Exemplo prático:** escolher 2 pessoas de {Ana, Bruno, Carlos} para presidente e vice-presidente. **Se fosse ARRANJO** (cargos diferentes): Ana-presidente/Bruno-vice ≠ Bruno-presidente/Ana-vice → $A(3,2) = 6$ resultados. **Se fosse COMBINAÇÃO** (só escolher 2 pessoas): {Ana,Bruno} = {Bruno,Ana} → $C(3,2) = 3$ resultados."
-    },
-    {
-        "id": 12,
-        "type": "exemplo",
-        "category": "combinacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "com-repeticao"
-        ],
-        "q": "Combinação com repetição: qual a fórmula?",
-        "a": "$C(n + p - 1, p)$",
-        "explanation": "**Natureza do problema:** Combinação com repetição - a ordem não importa MAS a repetição é permitida. **Fórmula usada:** $C(n+p-1, p)$ (também chamada 'combinação com reposição'). Esta fórmula vem da técnica matemática 'estrelas e barras'. **Exemplo:** escolher 3 bolas de 4 cores diferentes, podendo repetir cores: $C(4+3-1, 3) = C(6,3) = 20$ maneiras."
-    },
-    {
-        "id": 13,
-        "type": "exemplo",
-        "category": "combinacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "principio-multiplicativo"
-        ],
-        "q": "Princípio fundamental da contagem: fórmula geral?",
-        "a": "$k_1 \\cdot k_2 \\cdot ... \\cdot k_n$",
-        "explanation": "Se um evento pode ocorrer de $k_1$ maneiras, outro de $k_2$ maneiras, e assim por diante, então o número total de maneiras é o produto. Exemplo: escolher roupa (3 camisas × 2 calças × 4 sapatos = 24 combinações)."
-    },
-    {
-        "id": 14,
-        "type": "exemplo",
-        "category": "combinacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "subconjuntos"
-        ],
-        "q": "Número total de subconjuntos de um conjunto com n elementos?",
-        "a": "$2^n$",
-        "explanation": "Para cada elemento, temos 2 escolhas: incluí-lo ou não no subconjunto. Com $n$ elementos, temos $2^n$ subconjuntos (incluindo o conjunto vazio e o próprio conjunto). Exemplo: $\\{a,b\\}$ tem $2^2 = 4$ subconjuntos: $\\emptyset, \\{a\\}, \\{b\\}, \\{a,b\\}$."
-    },
-    {
-        "id": 15,
-        "type": "exemplo",
-        "category": "arranjo",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico"
-        ],
-        "q": "De quantas formas posso escolher um presidente e um vice de um grupo de 10 pessoas?",
-        "a": "$A(10,2) = 90$",
-        "explanation": "**Natureza do problema:** Arranjo simples - a ordem importa (presidente ≠ vice-presidente) e não há repetição (uma pessoa não pode ocupar ambos os cargos). **Fórmula usada:** $A(n,p) = \\dfrac{n!}{(n-p)!}$. Aplicando: $A(10,2) = \\dfrac{10!}{8!} = 10 \\times 9 = 90$ maneiras. Se fosse apenas escolher 2 pessoas (sem cargos específicos), seria combinação: $C(10,2) = 45$."
-    },
-    {
-        "id": 16,
-        "type": "exemplo",
-        "category": "permutacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "fatorial"
-        ],
-        "q": "Quantas formas de ordenar 6 livros distintos?",
-        "a": "$6! = 720$",
-        "explanation": "**Natureza do problema:** Permutação simples - queremos ordenar TODOS os elementos disponíveis (6 livros) e a ordem importa claramente. **Fórmula usada:** $P(n) = n!$. Como são 6 livros distintos: $P(6) = 6! = 6 \\times 5 \\times 4 \\times 3 \\times 2 \\times 1 = 720$ maneiras de organizá-los na estante."
-    },
-    {
-        "id": 17,
-        "type": "exemplo",
-        "category": "permutacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "anagrama",
-            "fatorial"
-        ],
-        "q": "Número de anagramas da palavra 'ANA'?",
-        "a": "$\\dfrac{3!}{2!} = 3$",
-        "explanation": "**Natureza do problema:** Permutação com repetição - a ordem das letras importa (ANA ≠ NAA) mas há repetição de elementos (2 letras A). **Fórmula usada:** $\\dfrac{n!}{r_1! \\times r_2! \\times ... \\times r_k!}$ onde $n$ é total de elementos e $r_i$ são as repetições. ANA tem 3 letras com 2 A's repetidos: $\\dfrac{3!}{2! \\times 1!} = \\dfrac{6}{2} = 3$ anagramas: ANA, AAN, NAA."
-    },
-    {
-        "id": 18,
-        "type": "exemplo",
-        "category": "arranjo",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "com-repeticao",
-            "sem-repeticao",
-            "senhas"
-        ],
-        "q": "Quantas senhas de 4 letras posso formar com 26 letras (sem repetição)?",
-        "a": "$A(26,4) = 26 \\cdot 25 \\cdot 24 \\cdot 23$",
-        "explanation": "**Natureza do problema:** Arranjo simples - a ordem importa (ABCD ≠ DCBA) e não há repetição (cada letra só pode ser usada uma vez). **Fórmula usada:** $A(n,p) = \\dfrac{n!}{(n-p)!}$. Escolhemos 4 letras de 26 disponíveis: $A(26,4) = \\dfrac{26!}{22!} = 26 \\times 25 \\times 24 \\times 23 = 358.800$ senhas. Se a repetição fosse permitida, seria $26^4 = 456.976$."
-    },
-    {
-        "id": 19,
-        "type": "exemplo",
-        "category": "combinacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "com-repeticao"
-        ],
-        "q": "Quantas combinações com repetição ao escolher 3 bolas de 5 cores?",
-        "a": "$C(5 + 3 - 1, 3) = C(7,3) = 35$",
-        "explanation": "**Natureza do problema:** Combinação com repetição - a ordem não importa (escolher {azul, azul, verde} = {verde, azul, azul}) mas a repetição é permitida (posso escolher várias bolas da mesma cor). **Fórmula usada:** $C(n+p-1, p)$ onde $n$ são as opções e $p$ são as escolhas. Aplicando: $C(5+3-1, 3) = C(7,3) = \\dfrac{7!}{3!4!} = 35$ maneiras. Se fosse sem repetição, seria apenas $C(5,3) = 10$."
-    },
-    {
-        "id": 20,
-        "type": "exemplo",
-        "category": "arranjo",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico"
-        ],
-        "q": "Quantos pares ordenados posso formar com A = {1,2} e B = {x,y,z}?",
-        "a": "$2 \\cdot 3 = 6$",
-        "explanation": "**Natureza do problema:** Produto cartesiano - queremos formar pares ordenados, então a ordem importa (1,x) ≠ (x,1), e cada elemento de A pode se combinar com cada elemento de B. **Fórmula usada:** Princípio fundamental da contagem: $|A| \\times |B|$. Resultado: $2 \\times 3 = 6$ pares ordenados: (1,x), (1,y), (1,z), (2,x), (2,y), (2,z). Não é arranjo nem combinação, mas produto cartesiano."
-    },
-    {
-        "id": 21,
-        "type": "exemplo",
-        "category": "combinacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico"
-        ],
-        "q": "Combinação de 10 tomados de 0 em 0?",
-        "a": "$C(10,0) = 1$",
-        "explanation": "Por definição, $C(n,0) = 1$ para qualquer $n \\geq 0$. Há apenas uma maneira de escolher 0 elementos: não escolher nenhum (conjunto vazio)."
-    },
-    {
-        "id": 22,
-        "type": "formula",
-        "category": "combinacao",
-        "difficulty": "basico",
-        "tags": [
-            "formula-fundamental"
-        ],
-        "q": "Soma: $\\sum_{k=1}^{n} C(n,k) = 2^n - 1$",
-        "a": "Soma das combinações de n elementos",
-        "explanation": "A soma de todas as combinações possíveis (exceto $C(n,0)$) é $2^n - 1$. Como $2^n$ é o total de subconjuntos e $C(n,0) = 1$, temos $2^n - 1$ subconjuntos não-vazios."
-    },
-    {
-        "id": 23,
-        "type": "exemplo",
-        "category": "combinacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico"
-        ],
-        "q": "Qual é o valor de $C(6,6)$?",
-        "a": "1",
-        "explanation": "Por definição, $C(n,n) = 1$ para qualquer $n \\geq 0$. Há apenas uma maneira de escolher todos os elementos: escolher o conjunto inteiro."
-    },
-    {
-        "id": 24,
-        "type": "exemplo",
-        "category": "permutacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "fatorial"
-        ],
-        "q": "Número de maneiras de organizar 3 pessoas em 3 lugares?",
-        "a": "$3! = 6$",
-        "explanation": "**Natureza do problema:** Permutação simples - queremos ordenar TODAS as pessoas disponíveis (3 pessoas em 3 lugares) e a ordem importa (pessoa A no lugar 1 ≠ pessoa A no lugar 2). **Fórmula usada:** $P(n) = n!$. Com 3 pessoas distintas: $P(3) = 3! = 3 \\times 2 \\times 1 = 6$ maneiras. Se as pessoas são A, B, C: ABC, ACB, BAC, BCA, CAB, CBA."
-    },
-    {
-        "id": 25,
-        "type": "exemplo",
-        "category": "permutacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "conceitos"
-        ],
-        "q": "Diferença entre permutação e arranjo?",
-        "a": "Permutação usa todos os elementos, arranjo usa só parte.",
-        "explanation": "**Diferença fundamental:** PERMUTAÇÃO = arranjo de TODOS os elementos disponíveis; ARRANJO = pode usar apenas PARTE dos elementos. **Fórmulas:** Permutação: $P(n) = n!$ | Arranjo: $A(n,p) = \\dfrac{n!}{(n-p)!}$ onde $p \\leq n$. **Exemplo:** com conjunto {1,2,3}. Permutação (usa todos): $P(3) = 3! = 6$ formas. Arranjo de 2 elementos: $A(3,2) = 6$ formas, mas usando só 2 dos 3 elementos disponíveis."
-    },
-    {
-        "id": 26,
-        "type": "exemplo",
-        "category": "arranjo",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico"
-        ],
-        "q": "Quantas combinações posso formar com 3 de 8 elementos?",
-        "a": "$C(8,3) = 56$",
-        "explanation": "**Natureza do problema:** Combinação simples - a ordem não importa (escolher {a,b,c} = {c,a,b}) e não há repetição de elementos. **Fórmula usada:** $C(n,p) = \\dfrac{n!}{p!(n-p)!}$. Aplicando: $C(8,3) = \\dfrac{8!}{3!(8-3)!} = \\dfrac{8!}{3! \\cdot 5!} = \\dfrac{8 \\times 7 \\times 6}{3 \\times 2 \\times 1} = \\dfrac{336}{6} = 56$ combinações. Se a ordem importasse, seria arranjo: $A(8,3) = 336$."
-    },
-    {
-        "id": 27,
-        "type": "exemplo",
-        "category": "permutacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "anagrama",
-            "fatorial"
-        ],
-        "q": "Número de anagramas da palavra 'BANANA'?",
-        "a": "$\\dfrac{6!}{3!1!1!1!} = 120$",
-        "explanation": "**Natureza do problema:** Permutação com repetição - a ordem das letras importa (BANANA ≠ ANABAN) mas há letras repetidas. **Fórmula usada:** $\\dfrac{n!}{r_1! \\times r_2! \\times ... \\times r_k!}$. BANANA tem 6 letras: 3 A's, 2 N's, 1 B. Cálculo: $\\dfrac{6!}{3! \\times 2! \\times 1!} = \\dfrac{720}{6 \\times 2 \\times 1} = \\dfrac{720}{12} = 60$ anagramas. Se todas as letras fossem distintas, seriam $6! = 720$ anagramas."
-    },
-    {
-        "id": 28,
-        "type": "exemplo",
-        "category": "combinacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "subconjuntos"
-        ],
-        "q": "Qual o total de subconjuntos de um conjunto com 0 elementos?",
-        "a": "1 (o conjunto vazio)",
-        "explanation": "O conjunto vazio $\\emptyset$ tem apenas um subconjunto: ele mesmo. Por isso $2^0 = 1$."
-    },
-    {
-        "id": 29,
-        "type": "formula",
-        "category": "arranjo",
-        "difficulty": "basico",
-        "tags": [
-            "formula-fundamental",
-            "com-repeticao"
-        ],
-        "q": "$n^p$ (com repetição e ordem)",
-        "a": "Use quando há repetição e ordem importa",
-        "explanation": "Arranjo com repetição: temos $n$ opções para cada uma das $p$ posições, podendo repetir. Exemplo: placas com 3 letras (26 opções cada): $26^3 = 17.576$ placas possíveis."
-    },
-    {
-        "id": 30,
-        "type": "exemplo",
-        "category": "combinacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico"
-        ],
-        "q": "Qual o valor de $C(7,1)$?",
-        "a": "7",
-        "explanation": "Por definição, $C(n,1) = n$ para qualquer $n \\geq 1$. Para escolher 1 elemento de 7, temos 7 opções."
-    },
-    {
-        "id": 31,
-        "type": "exemplo",
-        "category": "arranjo",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "com-repeticao",
-            "sem-repeticao"
-        ],
-        "q": "Quantas combinações sem repetição de 2 elementos entre 5?",
-        "a": "$C(5,2) = 10$",
-        "explanation": "**Natureza do problema:** Combinação simples - a ordem não importa (escolher {a,b} = {b,a}) e não há repetição de elementos. **Fórmula usada:** $C(n,p) = \\dfrac{n!}{p!(n-p)!}$. Aplicando: $C(5,2) = \\dfrac{5!}{2!(5-2)!} = \\dfrac{5!}{2! \\cdot 3!} = \\dfrac{5 \\times 4}{2 \\times 1} = \\dfrac{20}{2} = 10$ combinações. Se a ordem importasse, seria arranjo: $A(5,2) = 20$."
-    },
-    {
-        "id": 32,
-        "type": "formula",
-        "category": "permutacao",
-        "difficulty": "basico",
-        "tags": [
-            "formula-fundamental",
-            "fatorial"
-        ],
-        "q": "$A(n,n) = n!$",
-        "a": "Arranjo de n elementos tomados n a n = Permutação",
-        "explanation": "Quando escolhemos todos os elementos ($p = n$), o arranjo se torna permutação: $A(n,n) = \\dfrac{n!}{(n-n)!} = \\dfrac{n!}{0!} = n!$"
-    },
-    {
-        "id": 33,
-        "type": "exemplo",
-        "category": "permutacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "fatorial"
-        ],
-        "q": "Quantas formas de ordenar 4 elementos diferentes?",
-        "a": "$4! = 24$",
-        "explanation": "**Natureza do problema:** Permutação simples - queremos ordenar TODOS os elementos disponíveis (4 elementos) e a ordem importa claramente. **Fórmula usada:** $P(n) = n!$. Com 4 elementos distintos: $P(4) = 4! = 4 \\times 3 \\times 2 \\times 1 = 24$ maneiras de ordená-los. Se fosse escolher apenas alguns elementos (ex: 2 de 4), seria arranjo: $A(4,2) = 12$."
-    },
-    {
-        "id": 34,
-        "type": "exemplo",
-        "category": "permutacao",
-        "difficulty": "basico",
-        "tags": [
-            "exemplo-pratico",
-            "circular",
-            "fatorial"
-        ],
-        "q": "Permutação circular de n elementos?",
-        "a": "$P = (n-1)!$",
-        "explanation": "**Natureza do problema:** Permutação circular - a ordem importa MAS rotações são consideradas equivalentes (ABCD = BCDA = CDAB = DABC em círculo). **Fórmula usada:** $P_{circular}(n) = (n-1)!$. Em arranjos circulares, fixamos um elemento (para eliminar rotações equivalentes) e permutamos os outros $(n-1)$. **Exemplo:** 4 pessoas em mesa redonda: $(4-1)! = 3! = 6$ arranjos distintos. Se fosse em linha, seriam $4! = 24$ arranjos."
-    },
-    {
-        "id": 35,
-        "type": "dica",
-        "category": "arranjo",
-        "difficulty": "intermediario",
-        "tags": [
-            "metodologia",
-            "com-repeticao"
-        ],
-        "q": "Quando há repetição e a ordem importa.",
-        "a": "Use arranjo com repetição: $n^p$",
-        "explanation": "Se você pode reutilizar elementos e a ordem faz diferença, use $n^p$. Exemplo: códigos de 4 dígitos com números 0-9: $10^4 = 10.000$ códigos."
-    },
-    {
-        "id": 36,
-        "type": "dica",
-        "category": "arranjo",
-        "difficulty": "intermediario",
-        "tags": [
-            "metodologia",
-            "com-repeticao"
-        ],
-        "q": "Quando a ordem importa e não há repetição.",
-        "a": "Use arranjo simples: $A(n,p)$",
-        "explanation": "Se a ordem é importante mas não pode repetir elementos, use arranjo simples. Exemplo: escolher presidente e vice de 10 pessoas: $A(10,2) = 90$."
-    },
-    {
-        "id": 37,
-        "type": "dica",
-        "category": "combinacao",
-        "difficulty": "intermediario",
-        "tags": [
-            "metodologia",
-            "com-repeticao"
-        ],
-        "q": "Quando a ordem não importa e não há repetição.",
-        "a": "Use combinação simples: $C(n,p)$",
-        "explanation": "Se você está apenas escolhendo elementos (sem ordem), use combinação. Exemplo: escolher 3 pessoas de 10 para um comitê: $C(10,3) = 120$."
-    }
-]
+    "cards": [
+        {
+            "id": 1,
+            "type": "exemplo",
+            "category": "permutacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "anagrama",
+                "fatorial"
+            ],
+            "q": "Quantos anagramas diferentes a palavra 'ROMA' possui?",
+            "a": "$4! = 24$",
+            "explanation": "**Natureza do problema:** Permutação simples - a ordem das letras importa (ROMA ≠ AMOR) e não há repetição de letras. **Fórmula usada:** $P(n) = n!$. Como ROMA tem 4 letras distintas, aplicamos: $P(4) = 4! = 4 \\times 3 \\times 2 \\times 1 = 24$ anagramas diferentes."
+        },
+        {
+            "id": 2,
+            "type": "formula",
+            "category": "permutacao",
+            "difficulty": "basico",
+            "tags": [
+                "formula-fundamental",
+                "fatorial"
+            ],
+            "q": "$A(n, p) = \\dfrac{n!}{(n - p)!}$",
+            "a": "Fórmula do arranjo simples",
+            "explanation": "O arranjo simples calcula o número de maneiras de escolher e ordenar $p$ elementos de um conjunto de $n$ elementos. A ordem importa e não há repetição. Exemplo: $A(5,3) = \\dfrac{5!}{(5-3)!} = \\dfrac{5!}{2!} = \\dfrac{120}{2} = 60$"
+        },
+        {
+            "id": 3,
+            "type": "formula",
+            "category": "arranjo",
+            "difficulty": "basico",
+            "tags": [
+                "formula-fundamental",
+                "fatorial"
+            ],
+            "q": "$C(n, p) = \\dfrac{n!}{p!(n - p)!}$",
+            "a": "Fórmula da combinação simples",
+            "explanation": "A combinação simples calcula o número de maneiras de escolher $p$ elementos de um conjunto de $n$ elementos, onde a ordem não importa. É o arranjo dividido pelas permutações dos elementos escolhidos: $C(n,p) = \\dfrac{A(n,p)}{p!}$"
+        },
+        {
+            "id": 4,
+            "type": "formula",
+            "category": "arranjo",
+            "difficulty": "basico",
+            "tags": [
+                "formula-fundamental",
+                "com-repeticao"
+            ],
+            "q": "$n^p$",
+            "a": "Fórmula do arranjo com repetição",
+            "explanation": "Quando temos $n$ opções para cada uma das $p$ posições e podemos repetir elementos, usamos $n^p$. Exemplo: senhas de 3 dígitos com números de 0 a 9: $10^3 = 1000$ possibilidades."
+        },
+        {
+            "id": 5,
+            "type": "exemplo",
+            "category": "combinacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "subconjuntos"
+            ],
+            "q": "Quantos subconjuntos de tamanho 2 posso formar de um conjunto com 4 elementos?",
+            "a": "$C(4,2) = 6$",
+            "explanation": "**Natureza do problema:** Combinação simples - a ordem não importa (escolher {a,b} é igual a {b,a}) e não há repetição. **Fórmula usada:** $C(n,p) = \\dfrac{n!}{p!(n-p)!}$. Aplicando: $C(4,2) = \\dfrac{4!}{2!(4-2)!} = \\dfrac{4!}{2! \\cdot 2!} = \\dfrac{24}{4} = 6$. Se o conjunto for $\\{a,b,c,d\\}$, os subconjuntos são: $\\{a,b\\}, \\{a,c\\}, \\{a,d\\}, \\{b,c\\}, \\{b,d\\}, \\{c,d\\}$."
+        },
+        {
+            "id": 6,
+            "type": "exemplo",
+            "category": "arranjo",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "com-repeticao",
+                "senhas"
+            ],
+            "q": "Quantas senhas de 3 dígitos posso formar com os números de 0 a 9? (com repetição)",
+            "a": "$10^3 = 1000$",
+            "explanation": "**Natureza do problema:** Arranjo com repetição - a ordem importa (123 ≠ 321) e a repetição é permitida (pode usar 000, 111, etc.). **Fórmula usada:** $n^p$ onde $n$ é o número de opções e $p$ é o número de posições. Temos 10 opções (0 a 9) para cada uma das 3 posições: $10^3 = 10 \\times 10 \\times 10 = 1000$ senhas possíveis (de 000 até 999)."
+        },
+        {
+            "id": 7,
+            "type": "dica",
+            "category": "arranjo",
+            "difficulty": "basico",
+            "tags": [
+                "metodologia",
+                "com-repeticao",
+                "fatorial"
+            ],
+            "q": "Arranjo simples: $A(n, p) = \\dfrac{n!}{(n - p)!}$",
+            "a": "Use quando a ordem importa e não há repetição",
+            "explanation": "Dica prática: se você está escolhendo elementos E a ordem em que os escolhe faz diferença (como cargos diferentes ou posições em uma fila), use arranjo simples. A fórmula 'desconta' as posições não utilizadas dividindo por $(n-p)!$."
+        },
+        {
+            "id": 8,
+            "type": "exemplo",
+            "category": "combinacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "com-repeticao",
+                "sem-repeticao"
+            ],
+            "q": "Quantas combinações sem repetição são possíveis com 5 elementos escolhendo 3?",
+            "a": "$C(5,3) = 10$",
+            "explanation": "**Natureza do problema:** Combinação simples - a ordem não importa e não há repetição de elementos. **Fórmula usada:** $C(n,p) = \\dfrac{n!}{p!(n-p)!}$. Calculamos: $C(5,3) = \\dfrac{5!}{3!(5-3)!} = \\dfrac{5!}{3! \\cdot 2!} = \\dfrac{120}{6 \\cdot 2} = \\dfrac{120}{12} = 10$. Se o conjunto for $\\{1,2,3,4,5\\}$, as 10 combinações são: $\\{1,2,3\\}, \\{1,2,4\\}, \\{1,2,5\\}, \\{1,3,4\\}, \\{1,3,5\\}, \\{1,4,5\\}, \\{2,3,4\\}, \\{2,3,5\\}, \\{2,4,5\\}, \\{3,4,5\\}$."
+        },
+        {
+            "id": 9,
+            "type": "formula",
+            "category": "permutacao",
+            "difficulty": "basico",
+            "tags": [
+                "formula-fundamental",
+                "fatorial"
+            ],
+            "q": "$P(n) = n!$",
+            "a": "Fórmula da permutação simples",
+            "explanation": "A permutação simples é o caso especial do arranjo onde usamos todos os elementos ($p = n$). Por isso $A(n,n) = \\dfrac{n!}{(n-n)!} = \\dfrac{n!}{0!} = \\dfrac{n!}{1} = n!$. É o número de maneiras de ordenar $n$ elementos distintos."
+        },
+        {
+            "id": 10,
+            "type": "formula",
+            "category": "permutacao",
+            "difficulty": "basico",
+            "tags": [
+                "formula-fundamental",
+                "com-repeticao",
+                "fatorial"
+            ],
+            "q": "$\\dfrac{n!}{r_1! r_2! ... r_k!}$",
+            "a": "Fórmula da permutação com repetição",
+            "explanation": "Quando temos $n$ elementos onde alguns se repetem, dividimos o fatorial total pelos fatoriais das repetições. Exemplo: BANANA tem 6 letras, com 3 A's, 2 N's e 1 B: $\\dfrac{6!}{3! \\cdot 2! \\cdot 1!} = \\dfrac{720}{6 \\cdot 2 \\cdot 1} = 60$ anagramas."
+        },
+        {
+            "id": 11,
+            "type": "exemplo",
+            "category": "arranjo",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "conceitos"
+            ],
+            "q": "Qual a diferença entre arranjo e combinação?",
+            "a": "Arranjo considera a ordem, combinação não.",
+            "explanation": "**Diferença fundamental:** ARRANJO = ordem importa; COMBINAÇÃO = ordem não importa. **Exemplo prático:** escolher 2 pessoas de {Ana, Bruno, Carlos} para presidente e vice-presidente. **Se fosse ARRANJO** (cargos diferentes): Ana-presidente/Bruno-vice ≠ Bruno-presidente/Ana-vice → $A(3,2) = 6$ resultados. **Se fosse COMBINAÇÃO** (só escolher 2 pessoas): {Ana,Bruno} = {Bruno,Ana} → $C(3,2) = 3$ resultados."
+        },
+        {
+            "id": 12,
+            "type": "exemplo",
+            "category": "combinacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "com-repeticao"
+            ],
+            "q": "Combinação com repetição: qual a fórmula?",
+            "a": "$C(n + p - 1, p)$",
+            "explanation": "**Natureza do problema:** Combinação com repetição - a ordem não importa MAS a repetição é permitida. **Fórmula usada:** $C(n+p-1, p)$ (também chamada 'combinação com reposição'). Esta fórmula vem da técnica matemática 'estrelas e barras'. **Exemplo:** escolher 3 bolas de 4 cores diferentes, podendo repetir cores: $C(4+3-1, 3) = C(6,3) = 20$ maneiras."
+        },
+        {
+            "id": 13,
+            "type": "exemplo",
+            "category": "combinacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "principio-multiplicativo"
+            ],
+            "q": "Princípio fundamental da contagem: fórmula geral?",
+            "a": "$k_1 \\cdot k_2 \\cdot ... \\cdot k_n$",
+            "explanation": "Se um evento pode ocorrer de $k_1$ maneiras, outro de $k_2$ maneiras, e assim por diante, então o número total de maneiras é o produto. Exemplo: escolher roupa (3 camisas × 2 calças × 4 sapatos = 24 combinações)."
+        },
+        {
+            "id": 14,
+            "type": "exemplo",
+            "category": "combinacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "subconjuntos"
+            ],
+            "q": "Número total de subconjuntos de um conjunto com n elementos?",
+            "a": "$2^n$",
+            "explanation": "Para cada elemento, temos 2 escolhas: incluí-lo ou não no subconjunto. Com $n$ elementos, temos $2^n$ subconjuntos (incluindo o conjunto vazio e o próprio conjunto). Exemplo: $\\{a,b\\}$ tem $2^2 = 4$ subconjuntos: $\\emptyset, \\{a\\}, \\{b\\}, \\{a,b\\}$."
+        },
+        {
+            "id": 15,
+            "type": "exemplo",
+            "category": "arranjo",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico"
+            ],
+            "q": "De quantas formas posso escolher um presidente e um vice de um grupo de 10 pessoas?",
+            "a": "$A(10,2) = 90$",
+            "explanation": "**Natureza do problema:** Arranjo simples - a ordem importa (presidente ≠ vice-presidente) e não há repetição (uma pessoa não pode ocupar ambos os cargos). **Fórmula usada:** $A(n,p) = \\dfrac{n!}{(n-p)!}$. Aplicando: $A(10,2) = \\dfrac{10!}{8!} = 10 \\times 9 = 90$ maneiras. Se fosse apenas escolher 2 pessoas (sem cargos específicos), seria combinação: $C(10,2) = 45$."
+        },
+        {
+            "id": 16,
+            "type": "exemplo",
+            "category": "permutacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "fatorial"
+            ],
+            "q": "Quantas formas de ordenar 6 livros distintos?",
+            "a": "$6! = 720$",
+            "explanation": "**Natureza do problema:** Permutação simples - queremos ordenar TODOS os elementos disponíveis (6 livros) e a ordem importa claramente. **Fórmula usada:** $P(n) = n!$. Como são 6 livros distintos: $P(6) = 6! = 6 \\times 5 \\times 4 \\times 3 \\times 2 \\times 1 = 720$ maneiras de organizá-los na estante."
+        },
+        {
+            "id": 17,
+            "type": "exemplo",
+            "category": "permutacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "anagrama",
+                "fatorial"
+            ],
+            "q": "Número de anagramas da palavra 'ANA'?",
+            "a": "$\\dfrac{3!}{2!} = 3$",
+            "explanation": "**Natureza do problema:** Permutação com repetição - a ordem das letras importa (ANA ≠ NAA) mas há repetição de elementos (2 letras A). **Fórmula usada:** $\\dfrac{n!}{r_1! \\times r_2! \\times ... \\times r_k!}$ onde $n$ é total de elementos e $r_i$ são as repetições. ANA tem 3 letras com 2 A's repetidos: $\\dfrac{3!}{2! \\times 1!} = \\dfrac{6}{2} = 3$ anagramas: ANA, AAN, NAA."
+        },
+        {
+            "id": 18,
+            "type": "exemplo",
+            "category": "arranjo",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "com-repeticao",
+                "sem-repeticao",
+                "senhas"
+            ],
+            "q": "Quantas senhas de 4 letras posso formar com 26 letras (sem repetição)?",
+            "a": "$A(26,4) = 26 \\cdot 25 \\cdot 24 \\cdot 23$",
+            "explanation": "**Natureza do problema:** Arranjo simples - a ordem importa (ABCD ≠ DCBA) e não há repetição (cada letra só pode ser usada uma vez). **Fórmula usada:** $A(n,p) = \\dfrac{n!}{(n-p)!}$. Escolhemos 4 letras de 26 disponíveis: $A(26,4) = \\dfrac{26!}{22!} = 26 \\times 25 \\times 24 \\times 23 = 358.800$ senhas. Se a repetição fosse permitida, seria $26^4 = 456.976$."
+        },
+        {
+            "id": 19,
+            "type": "exemplo",
+            "category": "combinacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "com-repeticao"
+            ],
+            "q": "Quantas combinações com repetição ao escolher 3 bolas de 5 cores?",
+            "a": "$C(5 + 3 - 1, 3) = C(7,3) = 35$",
+            "explanation": "**Natureza do problema:** Combinação com repetição - a ordem não importa (escolher {azul, azul, verde} = {verde, azul, azul}) mas a repetição é permitida (posso escolher várias bolas da mesma cor). **Fórmula usada:** $C(n+p-1, p)$ onde $n$ são as opções e $p$ são as escolhas. Aplicando: $C(5+3-1, 3) = C(7,3) = \\dfrac{7!}{3!4!} = 35$ maneiras. Se fosse sem repetição, seria apenas $C(5,3) = 10$."
+        },
+        {
+            "id": 20,
+            "type": "exemplo",
+            "category": "arranjo",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico"
+            ],
+            "q": "Quantos pares ordenados posso formar com A = {1,2} e B = {x,y,z}?",
+            "a": "$2 \\cdot 3 = 6$",
+            "explanation": "**Natureza do problema:** Produto cartesiano - queremos formar pares ordenados, então a ordem importa (1,x) ≠ (x,1), e cada elemento de A pode se combinar com cada elemento de B. **Fórmula usada:** Princípio fundamental da contagem: $|A| \\times |B|$. Resultado: $2 \\times 3 = 6$ pares ordenados: (1,x), (1,y), (1,z), (2,x), (2,y), (2,z). Não é arranjo nem combinação, mas produto cartesiano."
+        },
+        {
+            "id": 21,
+            "type": "exemplo",
+            "category": "combinacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico"
+            ],
+            "q": "Combinação de 10 tomados de 0 em 0?",
+            "a": "$C(10,0) = 1$",
+            "explanation": "Por definição, $C(n,0) = 1$ para qualquer $n \\geq 0$. Há apenas uma maneira de escolher 0 elementos: não escolher nenhum (conjunto vazio)."
+        },
+        {
+            "id": 22,
+            "type": "formula",
+            "category": "combinacao",
+            "difficulty": "basico",
+            "tags": [
+                "formula-fundamental"
+            ],
+            "q": "Soma: $\\sum_{k=1}^{n} C(n,k) = 2^n - 1$",
+            "a": "Soma das combinações de n elementos",
+            "explanation": "A soma de todas as combinações possíveis (exceto $C(n,0)$) é $2^n - 1$. Como $2^n$ é o total de subconjuntos e $C(n,0) = 1$, temos $2^n - 1$ subconjuntos não-vazios."
+        },
+        {
+            "id": 23,
+            "type": "exemplo",
+            "category": "combinacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico"
+            ],
+            "q": "Qual é o valor de $C(6,6)$?",
+            "a": "1",
+            "explanation": "Por definição, $C(n,n) = 1$ para qualquer $n \\geq 0$. Há apenas uma maneira de escolher todos os elementos: escolher o conjunto inteiro."
+        },
+        {
+            "id": 24,
+            "type": "exemplo",
+            "category": "permutacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "fatorial"
+            ],
+            "q": "Número de maneiras de organizar 3 pessoas em 3 lugares?",
+            "a": "$3! = 6$",
+            "explanation": "**Natureza do problema:** Permutação simples - queremos ordenar TODAS as pessoas disponíveis (3 pessoas em 3 lugares) e a ordem importa (pessoa A no lugar 1 ≠ pessoa A no lugar 2). **Fórmula usada:** $P(n) = n!$. Com 3 pessoas distintas: $P(3) = 3! = 3 \\times 2 \\times 1 = 6$ maneiras. Se as pessoas são A, B, C: ABC, ACB, BAC, BCA, CAB, CBA."
+        },
+        {
+            "id": 25,
+            "type": "exemplo",
+            "category": "permutacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "conceitos"
+            ],
+            "q": "Diferença entre permutação e arranjo?",
+            "a": "Permutação usa todos os elementos, arranjo usa só parte.",
+            "explanation": "**Diferença fundamental:** PERMUTAÇÃO = arranjo de TODOS os elementos disponíveis; ARRANJO = pode usar apenas PARTE dos elementos. **Fórmulas:** Permutação: $P(n) = n!$ | Arranjo: $A(n,p) = \\dfrac{n!}{(n-p)!}$ onde $p \\leq n$. **Exemplo:** com conjunto {1,2,3}. Permutação (usa todos): $P(3) = 3! = 6$ formas. Arranjo de 2 elementos: $A(3,2) = 6$ formas, mas usando só 2 dos 3 elementos disponíveis."
+        },
+        {
+            "id": 26,
+            "type": "exemplo",
+            "category": "arranjo",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico"
+            ],
+            "q": "Quantas combinações posso formar com 3 de 8 elementos?",
+            "a": "$C(8,3) = 56$",
+            "explanation": "**Natureza do problema:** Combinação simples - a ordem não importa (escolher {a,b,c} = {c,a,b}) e não há repetição de elementos. **Fórmula usada:** $C(n,p) = \\dfrac{n!}{p!(n-p)!}$. Aplicando: $C(8,3) = \\dfrac{8!}{3!(8-3)!} = \\dfrac{8!}{3! \\cdot 5!} = \\dfrac{8 \\times 7 \\times 6}{3 \\times 2 \\times 1} = \\dfrac{336}{6} = 56$ combinações. Se a ordem importasse, seria arranjo: $A(8,3) = 336$."
+        },
+        {
+            "id": 27,
+            "type": "exemplo",
+            "category": "permutacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "anagrama",
+                "fatorial"
+            ],
+            "q": "Número de anagramas da palavra 'BANANA'?",
+            "a": "$\\dfrac{6!}{3!1!1!1!} = 120$",
+            "explanation": "**Natureza do problema:** Permutação com repetição - a ordem das letras importa (BANANA ≠ ANABAN) mas há letras repetidas. **Fórmula usada:** $\\dfrac{n!}{r_1! \\times r_2! \\times ... \\times r_k!}$. BANANA tem 6 letras: 3 A's, 2 N's, 1 B. Cálculo: $\\dfrac{6!}{3! \\times 2! \\times 1!} = \\dfrac{720}{6 \\times 2 \\times 1} = \\dfrac{720}{12} = 60$ anagramas. Se todas as letras fossem distintas, seriam $6! = 720$ anagramas."
+        },
+        {
+            "id": 28,
+            "type": "exemplo",
+            "category": "combinacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "subconjuntos"
+            ],
+            "q": "Qual o total de subconjuntos de um conjunto com 0 elementos?",
+            "a": "1 (o conjunto vazio)",
+            "explanation": "O conjunto vazio $\\emptyset$ tem apenas um subconjunto: ele mesmo. Por isso $2^0 = 1$."
+        },
+        {
+            "id": 29,
+            "type": "formula",
+            "category": "arranjo",
+            "difficulty": "basico",
+            "tags": [
+                "formula-fundamental",
+                "com-repeticao"
+            ],
+            "q": "$n^p$ (com repetição e ordem)",
+            "a": "Use quando há repetição e ordem importa",
+            "explanation": "Arranjo com repetição: temos $n$ opções para cada uma das $p$ posições, podendo repetir. Exemplo: placas com 3 letras (26 opções cada): $26^3 = 17.576$ placas possíveis."
+        },
+        {
+            "id": 30,
+            "type": "exemplo",
+            "category": "combinacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico"
+            ],
+            "q": "Qual o valor de $C(7,1)$?",
+            "a": "7",
+            "explanation": "Por definição, $C(n,1) = n$ para qualquer $n \\geq 1$. Para escolher 1 elemento de 7, temos 7 opções."
+        },
+        {
+            "id": 31,
+            "type": "exemplo",
+            "category": "arranjo",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "com-repeticao",
+                "sem-repeticao"
+            ],
+            "q": "Quantas combinações sem repetição de 2 elementos entre 5?",
+            "a": "$C(5,2) = 10$",
+            "explanation": "**Natureza do problema:** Combinação simples - a ordem não importa (escolher {a,b} = {b,a}) e não há repetição de elementos. **Fórmula usada:** $C(n,p) = \\dfrac{n!}{p!(n-p)!}$. Aplicando: $C(5,2) = \\dfrac{5!}{2!(5-2)!} = \\dfrac{5!}{2! \\cdot 3!} = \\dfrac{5 \\times 4}{2 \\times 1} = \\dfrac{20}{2} = 10$ combinações. Se a ordem importasse, seria arranjo: $A(5,2) = 20$."
+        },
+        {
+            "id": 32,
+            "type": "formula",
+            "category": "permutacao",
+            "difficulty": "basico",
+            "tags": [
+                "formula-fundamental",
+                "fatorial"
+            ],
+            "q": "$A(n,n) = n!$",
+            "a": "Arranjo de n elementos tomados n a n = Permutação",
+            "explanation": "Quando escolhemos todos os elementos ($p = n$), o arranjo se torna permutação: $A(n,n) = \\dfrac{n!}{(n-n)!} = \\dfrac{n!}{0!} = n!$"
+        },
+        {
+            "id": 33,
+            "type": "exemplo",
+            "category": "permutacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "fatorial"
+            ],
+            "q": "Quantas formas de ordenar 4 elementos diferentes?",
+            "a": "$4! = 24$",
+            "explanation": "**Natureza do problema:** Permutação simples - queremos ordenar TODOS os elementos disponíveis (4 elementos) e a ordem importa claramente. **Fórmula usada:** $P(n) = n!$. Com 4 elementos distintos: $P(4) = 4! = 4 \\times 3 \\times 2 \\times 1 = 24$ maneiras de ordená-los. Se fosse escolher apenas alguns elementos (ex: 2 de 4), seria arranjo: $A(4,2) = 12$."
+        },
+        {
+            "id": 34,
+            "type": "exemplo",
+            "category": "permutacao",
+            "difficulty": "basico",
+            "tags": [
+                "exemplo-pratico",
+                "circular",
+                "fatorial"
+            ],
+            "q": "Permutação circular de n elementos?",
+            "a": "$P = (n-1)!$",
+            "explanation": "**Natureza do problema:** Permutação circular - a ordem importa MAS rotações são consideradas equivalentes (ABCD = BCDA = CDAB = DABC em círculo). **Fórmula usada:** $P_{circular}(n) = (n-1)!$. Em arranjos circulares, fixamos um elemento (para eliminar rotações equivalentes) e permutamos os outros $(n-1)$. **Exemplo:** 4 pessoas em mesa redonda: $(4-1)! = 3! = 6$ arranjos distintos. Se fosse em linha, seriam $4! = 24$ arranjos."
+        },
+        {
+            "id": 35,
+            "type": "dica",
+            "category": "arranjo",
+            "difficulty": "intermediario",
+            "tags": [
+                "metodologia",
+                "com-repeticao"
+            ],
+            "q": "Quando há repetição e a ordem importa.",
+            "a": "Use arranjo com repetição: $n^p$",
+            "explanation": "Se você pode reutilizar elementos e a ordem faz diferença, use $n^p$. Exemplo: códigos de 4 dígitos com números 0-9: $10^4 = 10.000$ códigos."
+        },
+        {
+            "id": 36,
+            "type": "dica",
+            "category": "arranjo",
+            "difficulty": "intermediario",
+            "tags": [
+                "metodologia",
+                "com-repeticao"
+            ],
+            "q": "Quando a ordem importa e não há repetição.",
+            "a": "Use arranjo simples: $A(n,p)$",
+            "explanation": "Se a ordem é importante mas não pode repetir elementos, use arranjo simples. Exemplo: escolher presidente e vice de 10 pessoas: $A(10,2) = 90$."
+        },
+        {
+            "id": 37,
+            "type": "dica",
+            "category": "combinacao",
+            "difficulty": "intermediario",
+            "tags": [
+                "metodologia",
+                "com-repeticao"
+            ],
+            "q": "Quando a ordem não importa e não há repetição.",
+            "a": "Use combinação simples: $C(n,p)$",
+            "explanation": "Se você está apenas escolhendo elementos (sem ordem), use combinação. Exemplo: escolher 3 pessoas de 10 para um comitê: $C(10,3) = 120$."
+        }
+    ]
+}

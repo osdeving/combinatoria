@@ -1,30 +1,70 @@
+let cardsData = {};
 let cards = [];
 let current = 0;
 let reverse = false;
 let flipped = false;
 let explanationVisible = false;
+let currentFilter = {
+    category: 'all',
+    difficulty: 'all',
+    tags: []
+};
 
 async function loadCards() {
     try {
         const res = await fetch("cards.json");
-        cards = await res.json();
+        cardsData = await res.json();
+        cards = cardsData.cards || [];
         current = 0;
+        applyFilters();
         showCard();
     } catch (error) {
         console.error("Erro ao carregar cards:", error);
         // Fallback para um card de exemplo se houver erro
-        cards = [
-            {
-                type: "exemplo",
-                q: "Erro ao carregar flashcards",
-                a: "Verifique se o arquivo cards.json existe",
-                explanation:
-                    "Certifique-se de que o arquivo JSON está na mesma pasta que o HTML.",
-            },
-        ];
+        cardsData = {
+            metadata: { totalCards: 1 },
+            cards: [
+                {
+                    id: 1,
+                    type: "exemplo",
+                    category: "geral",
+                    difficulty: "basico",
+                    tags: ["erro"],
+                    q: "Erro ao carregar flashcards",
+                    a: "Verifique se o arquivo cards.json existe",
+                    explanation: "Certifique-se de que o arquivo JSON está na mesma pasta que o HTML.",
+                },
+            ]
+        };
+        cards = cardsData.cards;
         current = 0;
         showCard();
     }
+}
+
+function applyFilters() {
+    let filteredCards = cardsData.cards || [];
+    
+    // Filtrar por categoria
+    if (currentFilter.category !== 'all') {
+        filteredCards = filteredCards.filter(card => card.category === currentFilter.category);
+    }
+    
+    // Filtrar por dificuldade
+    if (currentFilter.difficulty !== 'all') {
+        filteredCards = filteredCards.filter(card => card.difficulty === currentFilter.difficulty);
+    }
+    
+    // Filtrar por tags
+    if (currentFilter.tags.length > 0) {
+        filteredCards = filteredCards.filter(card => 
+            currentFilter.tags.some(tag => card.tags && card.tags.includes(tag))
+        );
+    }
+    
+    cards = filteredCards;
+    current = Math.min(current, cards.length - 1);
+    if (current < 0) current = 0;
 }
 
 function renderMathInCard() {
