@@ -389,27 +389,6 @@
         <script src="lib/auto-render.min.js"></script>
 
         <!-- Script da aplicação -->
-        <script>
-            // Aguardar carregamento completo do KaTeX antes de carregar a aplicação
-            if (window.katex && window.renderMathInElement) {
-                console.log("KaTeX carregado imediatamente");
-                loadApp();
-            } else {
-                window.addEventListener("load", function () {
-                    console.log(
-                        "KaTeX carregado após window.load:",
-                        !!window.katex,
-                        !!window.renderMathInElement
-                    );
-                    setTimeout(loadApp, 100);
-                });
-            }
-
-            function loadApp() {
-                const script = document.createElement("script");
-                script.src = "script.js";
-                document.head.appendChild(script);
-            }
-        </script>
+        <script src="script.js"></script>
     </body>
 </html>

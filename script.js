@@ -66,16 +66,20 @@ function testLatexNow() {
 // Tornar a função global
 window.testLatexNow = testLatexNow;
 
-// Inicialização (otimizada)
+// Inicialização simplificada
 document.addEventListener("DOMContentLoaded", function () {
-    loadFlashcards();
-    setupEventListeners();
-    setupResponsive();
-
-    // Testar LaTeX após um pequeno delay
+    console.log("DOM carregado, iniciando aplicação...");
+    
+    // Inicializar imediatamente
     setTimeout(() => {
-        testLatexNow();
-    }, 1000);
+        console.log("Carregando flashcards...");
+        loadFlashcards();
+        setupEventListeners();
+        setupResponsive();
+        
+        // Testar LaTeX
+        setTimeout(testLatexNow, 1000);
+    }, 100);
 });
 
 // Carregamento dos dados
@@ -989,34 +993,120 @@ function renderMathContent(element) {
 } // Função simplificada para debug (removida para otimização)
 // window.testMath e window.forceRenderMath removidas
 
-// Funções de wrapper para compatibilidade com HTML
-function setCategory(category) {
-    setActiveCategory(category);
-}
+// Funções globais para o HTML
+window.setCategory = function(category) {
+    if(typeof setActiveCategory === 'function') {
+        setActiveCategory(category);
+    }
+};
 
-function setDifficulty(difficulty) {
+window.setDifficulty = function(difficulty) {
     if (difficulty === "all") difficulty = "todas";
-    setActiveDifficulty(difficulty);
-}
+    if(typeof setActiveDifficulty === 'function') {
+        setActiveDifficulty(difficulty);
+    }
+};
 
-function shuffleCards() {
-    showRandomCard();
-}
+window.shuffleCards = function() {
+    if(typeof showRandomCard === 'function') {
+        showRandomCard();
+    }
+};
 
-function performSearch() {
+window.prevCard = function() {
+    if(typeof previousCard === 'function') {
+        previousCard();
+    }
+};
+
+window.nextCard = function() {
+    if (currentData.length === 0) return;
+    currentCardIndex = (currentCardIndex + 1) % currentData.length;
+    if(typeof showCard === 'function') {
+        showCard(currentCardIndex);
+    }
+};
+
+window.flipCard = function() {
+    const flashcard = document.querySelector(".flashcard");
+    if(flashcard) {
+        isFlipped = !isFlipped;
+        flashcard.classList.toggle("flipped", isFlipped);
+    }
+};
+
+window.toggleReverse = function() {
+    console.log("Função toggleReverse não implementada");
+};
+
+window.toggleExplanation = function() {
+    appState.showExplanation = !appState.showExplanation;
+    const explanationContent = document.querySelector(".explanation-content");
+    const explanationBtn = document.getElementById("explanationBtn");
+
+    if (explanationContent) {
+        explanationContent.classList.toggle("show", appState.showExplanation);
+    }
+
+    if (explanationBtn) {
+        explanationBtn.classList.toggle("active", appState.showExplanation);
+    }
+};
+
+window.toggleStatsPanel = function() {
+    const statsPanel = document.querySelector(".stats-panel");
+    if (statsPanel) {
+        statsPanel.classList.toggle("open");
+    }
+};
+
+window.resetStats = function() {
+    sessionStats = {
+        correct: 0,
+        incorrect: 0,
+        skipped: 0,
+        startTime: Date.now(),
+        studyTime: 0,
+    };
+};
+
+window.toggleSidebar = function() {
+    if (appState.isMobile) {
+        if(typeof toggleMobileSidebar === 'function') {
+            toggleMobileSidebar();
+        }
+    } else {
+        const sidebar = document.querySelector(".sidebar");
+        if (sidebar) {
+            sidebar.classList.toggle("collapsed");
+        }
+    }
+};
+
+window.toggleStudyMode = function() {
+    studyMode = !studyMode;
+    const studyBtn = document.getElementById("studyModeBtn");
+    if (studyBtn) {
+        studyBtn.classList.toggle("active", studyMode);
+    }
+};
+
+window.performSearch = function() {
     const input = document.querySelector(".sidebar-search");
-    if (input) {
+    if (input && typeof handleSearch === 'function') {
         handleSearch({ target: input });
     }
-}
+};
 
-function clearSearch() {
+window.clearSearch = function() {
     const input = document.querySelector(".sidebar-search");
     const clearBtn = document.querySelector(".search-clear");
     if (input) {
         input.value = "";
         appState.activeSearch = "";
-        applyFilters();
+        if (typeof applyFilters === 'function') {
+            applyFilters();
+        }
         if (clearBtn) clearBtn.style.display = "none";
     }
-}
+};
