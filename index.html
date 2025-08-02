@@ -14,7 +14,60 @@
     </head>
     <body>
         <div class="container">
-            <div class="progress" id="progress"></div>
+            <!-- Header com navegação -->
+            <header class="header">
+                <h1 class="title">
+                    <span class="title-icon">🎯</span>
+                    Flashcards de Combinatória
+                </h1>
+                
+                <!-- Menu de categorias -->
+                <nav class="category-nav">
+                    <button class="category-btn active" data-category="all" onclick="setCategory('all')">
+                        <span class="category-icon">📚</span>
+                        <span class="category-name">Todas</span>
+                        <span class="category-count" id="count-all">37</span>
+                    </button>
+                    <button class="category-btn" data-category="permutacao" onclick="setCategory('permutacao')">
+                        <span class="category-icon">🔄</span>
+                        <span class="category-name">Permutação</span>
+                        <span class="category-count" id="count-permutacao">12</span>
+                    </button>
+                    <button class="category-btn" data-category="arranjo" onclick="setCategory('arranjo')">
+                        <span class="category-icon">📊</span>
+                        <span class="category-name">Arranjo</span>
+                        <span class="category-count" id="count-arranjo">13</span>
+                    </button>
+                    <button class="category-btn" data-category="combinacao" onclick="setCategory('combinacao')">
+                        <span class="category-icon">🎯</span>
+                        <span class="category-name">Combinação</span>
+                        <span class="category-count" id="count-combinacao">12</span>
+                    </button>
+                </nav>
+                
+                <!-- Filtros de dificuldade -->
+                <div class="difficulty-filters">
+                    <label class="filter-label">Dificuldade:</label>
+                    <div class="difficulty-buttons">
+                        <button class="difficulty-btn active" data-difficulty="all" onclick="setDifficulty('all')">
+                            <span class="difficulty-icon">🎯</span>
+                            Todas
+                        </button>
+                        <button class="difficulty-btn" data-difficulty="basico" onclick="setDifficulty('basico')">
+                            <span class="difficulty-icon">🟢</span>
+                            Básico
+                        </button>
+                        <button class="difficulty-btn" data-difficulty="intermediario" onclick="setDifficulty('intermediario')">
+                            <span class="difficulty-icon">🟡</span>
+                            Intermediário
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Conteúdo principal -->
+            <div class="main-content">
+                <div class="progress" id="progress"></div>
             <div
                 class="flashcard"
                 id="flashcard"
@@ -93,6 +146,7 @@
                         este problema.
                     </div>
                 </div>
+            </div>
             </div>
         </div>
         <script src="script.js"></script>

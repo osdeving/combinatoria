@@ -87,19 +87,34 @@ function renderMathInCard() {
 }
 
 function showCard() {
-    if (!cards.length) return;
+    if (!cards.length) {
+        document.getElementById("question").innerHTML = "Nenhum card encontrado para os filtros selecionados";
+        document.getElementById("answer").innerHTML = "Tente alterar os filtros";
+        document.getElementById("progress").textContent = "0 de 0";
+        return;
+    }
+    
     const card = cards[current];
     const front = reverse ? card.a || "Sem resposta" : card.q;
     const back = reverse ? card.q : card.a || "Sem resposta";
 
     document.getElementById("question").innerHTML = front || "Carregando...";
     document.getElementById("answer").innerHTML = back || "Sem resposta";
-    document.getElementById("progress").textContent = `Card ${current + 1} de ${
-        cards.length
-    }`;
+    
+    // Mostrar informações da categoria atual
+    const categoryInfo = currentFilter.category !== 'all' 
+        ? ` (${currentFilter.category.charAt(0).toUpperCase() + currentFilter.category.slice(1)})` 
+        : '';
+    
+    const difficultyInfo = currentFilter.difficulty !== 'all' 
+        ? ` - ${currentFilter.difficulty.charAt(0).toUpperCase() + currentFilter.difficulty.slice(1)}` 
+        : '';
+        
+    document.getElementById("progress").textContent = `Card ${current + 1} de ${cards.length}${categoryInfo}${difficultyInfo}`;
 
     // Atualizar explicação
     updateExplanation();
+    updateCategoryCounts();
 
     flipped = false;
     document.getElementById("flashcard").classList.remove("flipped");
@@ -146,7 +161,67 @@ function toggleExplanation() {
 function flipCard() {
     flipped = !flipped;
     document.getElementById("flashcard").classList.toggle("flipped", flipped);
-    renderMathInCard();
+    // Funções de filtro
+function setCategory(category) {
+    currentFilter.category = category;
+    updateCategoryButtons();
+    applyFilters();
+    current = 0;
+    showCard();
+}
+
+function setDifficulty(difficulty) {
+    currentFilter.difficulty = difficulty;
+    updateDifficultyButtons();
+    applyFilters();
+    current = 0;
+    showCard();
+}
+
+function updateCategoryButtons() {
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.category === currentFilter.category) {
+            btn.classList.add('active');
+        }
+    });
+}
+
+function updateDifficultyButtons() {
+    document.querySelectorAll('.difficulty-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.difficulty === currentFilter.difficulty) {
+            btn.classList.add('active');
+        }
+    });
+}
+
+function updateCategoryCounts() {
+    if (!cardsData.metadata) return;
+    
+    // Atualizar contador total
+    const totalCount = currentFilter.difficulty === 'all' 
+        ? cardsData.metadata.totalCards 
+        : cardsData.cards.filter(card => card.difficulty === currentFilter.difficulty).length;
+    
+    const countAll = document.getElementById('count-all');
+    if (countAll) countAll.textContent = totalCount;
+    
+    // Atualizar contadores por categoria
+    Object.keys(cardsData.metadata.categories || {}).forEach(category => {
+        let count = cardsData.cards.filter(card => card.category === category);
+        if (currentFilter.difficulty !== 'all') {
+            count = count.filter(card => card.difficulty === currentFilter.difficulty);
+        }
+        
+        const countElement = document.getElementById(`count-${category}`);
+        if (countElement) {
+            countElement.textContent = count.length;
+        }
+    });
+}
+
+renderMathInCard();
 }
 
 function nextCard() {
@@ -196,4 +271,12 @@ document.addEventListener("DOMContentLoaded", function () {
     loadCards();
 });
 
-window.onload = loadCards;
+window.onload = function() {
+    loadCards();
+    // Inicializar interface após carregamento
+    setTimeout(() => {
+        updateCategoryButtons();
+        updateDifficultyButtons();
+        updateCategoryCounts();
+    }, 100);
+};
