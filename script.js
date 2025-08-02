@@ -12,22 +12,22 @@ let sessionStats = {
     incorrect: 0,
     skipped: 0,
     startTime: Date.now(),
-    studyTime: 0
+    studyTime: 0,
 };
 
 // Estado da aplicação
 let appState = {
-    activeCategory: 'todas',
-    activeDifficulty: 'todas',
-    activeSearch: '',
+    activeCategory: "todas",
+    activeDifficulty: "todas",
+    activeSearch: "",
     activeTags: new Set(),
     showExplanation: false,
     sidebarOpen: false,
-    isMobile: window.innerWidth <= 768
+    isMobile: window.innerWidth <= 768,
 };
 
 // Inicialização
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function () {
     loadFlashcards();
     setupEventListeners();
     setupResponsive();
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Carregamento dos dados
 async function loadFlashcards() {
     try {
-        const response = await fetch('cards.json');
+        const response = await fetch("cards.json");
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -45,17 +45,16 @@ async function loadFlashcards() {
         allCards = data.cards || [];
         filteredCards = [...allCards];
         currentData = [...allCards];
-        
+
         console.log(`Carregadas ${allCards.length} cartas`);
-        
+
         updateCounters();
         updateProgressBar();
         showRandomCard();
         renderSidebarContent();
-        
     } catch (error) {
-        console.error('Erro ao carregar flashcards:', error);
-        document.querySelector('.flashcard').innerHTML = `
+        console.error("Erro ao carregar flashcards:", error);
+        document.querySelector(".flashcard").innerHTML = `
             <div class="card-face card-front">
                 <div class="question">❌ Erro ao carregar dados: ${error.message}</div>
             </div>
@@ -66,124 +65,127 @@ async function loadFlashcards() {
 // Configuração de event listeners
 function setupEventListeners() {
     // Toggle da sidebar
-    const toggleBtn = document.querySelector('.sidebar-toggle');
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const overlay = document.querySelector('.sidebar-overlay');
-    
+    const toggleBtn = document.querySelector(".sidebar-toggle");
+    const mobileMenuBtn = document.querySelector(".mobile-menu-btn");
+    const overlay = document.querySelector(".sidebar-overlay");
+
     if (toggleBtn) {
-        toggleBtn.addEventListener('click', toggleSidebar);
+        toggleBtn.addEventListener("click", toggleSidebar);
     }
-    
+
     if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', toggleMobileSidebar);
+        mobileMenuBtn.addEventListener("click", toggleMobileSidebar);
     }
-    
+
     if (overlay) {
-        overlay.addEventListener('click', closeMobileSidebar);
+        overlay.addEventListener("click", closeMobileSidebar);
     }
-    
+
     // Botões de navegação da sidebar
     setupSidebarNavigation();
-    
+
     // Busca na sidebar
-    const searchInput = document.querySelector('.sidebar-search');
-    const searchClear = document.querySelector('.search-clear');
-    
+    const searchInput = document.querySelector(".sidebar-search");
+    const searchClear = document.querySelector(".search-clear");
+
     if (searchInput) {
-        searchInput.addEventListener('input', handleSearch);
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
+        searchInput.addEventListener("input", handleSearch);
+        searchInput.addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
                 e.preventDefault();
                 handleSearch(e);
             }
         });
     }
-    
+
     if (searchClear) {
-        searchClear.addEventListener('click', clearSearch);
+        searchClear.addEventListener("click", clearSearch);
     }
-    
+
     // Controles principais
-    const flashcard = document.querySelector('.flashcard');
+    const flashcard = document.querySelector(".flashcard");
     if (flashcard) {
-        flashcard.addEventListener('click', flipCard);
+        flashcard.addEventListener("click", flipCard);
     }
-    
+
     // Botões de controle
-    const nextBtn = document.getElementById('nextBtn');
-    const prevBtn = document.getElementById('prevBtn');
-    const randomBtn = document.getElementById('randomBtn');
-    const studyBtn = document.getElementById('studyBtn');
-    const explanationBtn = document.getElementById('explanationBtn');
-    const statsBtn = document.getElementById('statsBtn');
-    
-    if (nextBtn) nextBtn.addEventListener('click', nextCard);
-    if (prevBtn) prevBtn.addEventListener('click', previousCard);
-    if (randomBtn) randomBtn.addEventListener('click', showRandomCard);
-    if (studyBtn) studyBtn.addEventListener('click', toggleStudyMode);
-    if (explanationBtn) explanationBtn.addEventListener('click', toggleExplanation);
-    if (statsBtn) statsBtn.addEventListener('click', toggleStatsPanel);
-    
+    const nextBtn = document.getElementById("nextBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const randomBtn = document.getElementById("randomBtn");
+    const studyBtn = document.getElementById("studyBtn");
+    const explanationBtn = document.getElementById("explanationBtn");
+    const statsBtn = document.getElementById("statsBtn");
+
+    if (nextBtn) nextBtn.addEventListener("click", nextCard);
+    if (prevBtn) prevBtn.addEventListener("click", previousCard);
+    if (randomBtn) randomBtn.addEventListener("click", showRandomCard);
+    if (studyBtn) studyBtn.addEventListener("click", toggleStudyMode);
+    if (explanationBtn)
+        explanationBtn.addEventListener("click", toggleExplanation);
+    if (statsBtn) statsBtn.addEventListener("click", toggleStatsPanel);
+
     // Botões do modo estudo
-    const correctBtn = document.getElementById('correctBtn');
-    const incorrectBtn = document.getElementById('incorrectBtn');
-    const skipBtn = document.getElementById('skipBtn');
-    
-    if (correctBtn) correctBtn.addEventListener('click', () => answerCard('correct'));
-    if (incorrectBtn) incorrectBtn.addEventListener('click', () => answerCard('incorrect'));
-    if (skipBtn) skipBtn.addEventListener('click', () => answerCard('skipped'));
-    
+    const correctBtn = document.getElementById("correctBtn");
+    const incorrectBtn = document.getElementById("incorrectBtn");
+    const skipBtn = document.getElementById("skipBtn");
+
+    if (correctBtn)
+        correctBtn.addEventListener("click", () => answerCard("correct"));
+    if (incorrectBtn)
+        incorrectBtn.addEventListener("click", () => answerCard("incorrect"));
+    if (skipBtn) skipBtn.addEventListener("click", () => answerCard("skipped"));
+
     // Fechar painel de estatísticas
-    const statsClose = document.querySelector('.stats-close');
+    const statsClose = document.querySelector(".stats-close");
     if (statsClose) {
-        statsClose.addEventListener('click', toggleStatsPanel);
+        statsClose.addEventListener("click", toggleStatsPanel);
     }
-    
+
     // Teclado
-    document.addEventListener('keydown', handleKeyboard);
-    
+    document.addEventListener("keydown", handleKeyboard);
+
     // Resize
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 }
 
 // Configuração da navegação da sidebar
 function setupSidebarNavigation() {
     // Categorias
-    const categoryBtns = document.querySelectorAll('[data-category]');
-    categoryBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
+    const categoryBtns = document.querySelectorAll("[data-category]");
+    categoryBtns.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
             e.preventDefault();
-            const category = btn.getAttribute('data-category');
+            const category = btn.getAttribute("data-category");
             setActiveCategory(category);
         });
     });
-    
+
     // Dificuldades
-    const difficultyBtns = document.querySelectorAll('[data-difficulty]');
-    difficultyBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
+    const difficultyBtns = document.querySelectorAll("[data-difficulty]");
+    difficultyBtns.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
             e.preventDefault();
-            const difficulty = btn.getAttribute('data-difficulty');
+            const difficulty = btn.getAttribute("data-difficulty");
             setActiveDifficulty(difficulty);
         });
     });
-    
+
     // Tags
-    const tagBtns = document.querySelectorAll('[data-tag]');
-    tagBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
+    const tagBtns = document.querySelectorAll("[data-tag]");
+    tagBtns.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
             e.preventDefault();
-            const tag = btn.getAttribute('data-tag');
+            const tag = btn.getAttribute("data-tag");
             toggleTag(tag);
         });
     });
-    
+
     // Botões de ação
-    const actionBtns = document.querySelectorAll('[data-action]');
-    actionBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
+    const actionBtns = document.querySelectorAll("[data-action]");
+    actionBtns.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
             e.preventDefault();
-            const action = btn.getAttribute('data-action');
+            const action = btn.getAttribute("data-action");
             handleAction(action);
         });
     });
@@ -191,14 +193,14 @@ function setupSidebarNavigation() {
 
 // Gerenciamento da sidebar
 function toggleSidebar() {
-    const sidebar = document.querySelector('.sidebar');
-    sidebar.classList.toggle('collapsed');
-    
-    const icon = document.querySelector('.sidebar-toggle');
-    if (sidebar.classList.contains('collapsed')) {
-        icon.textContent = '→';
+    const sidebar = document.querySelector(".sidebar");
+    sidebar.classList.toggle("collapsed");
+
+    const icon = document.querySelector(".sidebar-toggle");
+    if (sidebar.classList.contains("collapsed")) {
+        icon.textContent = "→";
     } else {
-        icon.textContent = '←';
+        icon.textContent = "←";
     }
 }
 
@@ -213,16 +215,16 @@ function closeMobileSidebar() {
 }
 
 function updateSidebarState() {
-    const sidebar = document.querySelector('.sidebar');
-    const overlay = document.querySelector('.sidebar-overlay');
-    
+    const sidebar = document.querySelector(".sidebar");
+    const overlay = document.querySelector(".sidebar-overlay");
+
     if (appState.isMobile) {
         if (appState.sidebarOpen) {
-            sidebar.classList.add('open');
-            overlay.classList.add('show');
+            sidebar.classList.add("open");
+            overlay.classList.add("show");
         } else {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('show');
+            sidebar.classList.remove("open");
+            overlay.classList.remove("show");
         }
     }
 }
@@ -259,71 +261,77 @@ function toggleTag(tag) {
 function handleSearch(e) {
     appState.activeSearch = e.target.value.toLowerCase().trim();
     applyFilters();
-    
-    const clearBtn = document.querySelector('.search-clear');
+
+    const clearBtn = document.querySelector(".search-clear");
     if (clearBtn) {
-        clearBtn.style.display = appState.activeSearch ? 'block' : 'none';
+        clearBtn.style.display = appState.activeSearch ? "block" : "none";
     }
 }
 
 function clearSearch() {
-    const input = document.querySelector('.sidebar-search');
+    const input = document.querySelector(".sidebar-search");
     if (input) {
-        input.value = '';
-        appState.activeSearch = '';
+        input.value = "";
+        appState.activeSearch = "";
         applyFilters();
-        
-        const clearBtn = document.querySelector('.search-clear');
+
+        const clearBtn = document.querySelector(".search-clear");
         if (clearBtn) {
-            clearBtn.style.display = 'none';
+            clearBtn.style.display = "none";
         }
     }
 }
 
 function applyFilters() {
     let filtered = [...allCards];
-    
+
     // Filtro por categoria
-    if (appState.activeCategory !== 'todas') {
-        filtered = filtered.filter(card => card.category === appState.activeCategory);
+    if (appState.activeCategory !== "todas") {
+        filtered = filtered.filter(
+            (card) => card.category === appState.activeCategory
+        );
     }
-    
+
     // Filtro por dificuldade
-    if (appState.activeDifficulty !== 'todas') {
-        filtered = filtered.filter(card => card.difficulty === appState.activeDifficulty);
+    if (appState.activeDifficulty !== "todas") {
+        filtered = filtered.filter(
+            (card) => card.difficulty === appState.activeDifficulty
+        );
     }
-    
+
     // Filtro por tags
     if (appState.activeTags.size > 0) {
-        filtered = filtered.filter(card => {
+        filtered = filtered.filter((card) => {
             if (!card.tags || !Array.isArray(card.tags)) return false;
-            return Array.from(appState.activeTags).every(tag => 
+            return Array.from(appState.activeTags).every((tag) =>
                 card.tags.includes(tag)
             );
         });
     }
-    
+
     // Filtro por busca
     if (appState.activeSearch) {
-        filtered = filtered.filter(card => {
+        filtered = filtered.filter((card) => {
             const searchIn = [
                 card.question,
                 card.answer,
-                card.explanation || '',
-                ...(card.tags || [])
-            ].join(' ').toLowerCase();
-            
+                card.explanation || "",
+                ...(card.tags || []),
+            ]
+                .join(" ")
+                .toLowerCase();
+
             return searchIn.includes(appState.activeSearch);
         });
     }
-    
+
     filteredCards = filtered;
     currentData = filtered;
     currentCardIndex = 0;
-    
+
     updateCounters();
     updateProgressBar();
-    
+
     if (filteredCards.length > 0) {
         showCard(currentCardIndex);
     } else {
@@ -334,46 +342,49 @@ function applyFilters() {
 // Atualização dos estados ativos na sidebar
 function updateSidebarActiveStates() {
     // Categorias
-    document.querySelectorAll('[data-category]').forEach(btn => {
-        const category = btn.getAttribute('data-category');
-        btn.classList.toggle('active', category === appState.activeCategory);
+    document.querySelectorAll("[data-category]").forEach((btn) => {
+        const category = btn.getAttribute("data-category");
+        btn.classList.toggle("active", category === appState.activeCategory);
     });
-    
+
     // Dificuldades
-    document.querySelectorAll('[data-difficulty]').forEach(btn => {
-        const difficulty = btn.getAttribute('data-difficulty');
-        btn.classList.toggle('active', difficulty === appState.activeDifficulty);
+    document.querySelectorAll("[data-difficulty]").forEach((btn) => {
+        const difficulty = btn.getAttribute("data-difficulty");
+        btn.classList.toggle(
+            "active",
+            difficulty === appState.activeDifficulty
+        );
     });
-    
+
     // Tags
-    document.querySelectorAll('[data-tag]').forEach(btn => {
-        const tag = btn.getAttribute('data-tag');
-        btn.classList.toggle('active', appState.activeTags.has(tag));
+    document.querySelectorAll("[data-tag]").forEach((btn) => {
+        const tag = btn.getAttribute("data-tag");
+        btn.classList.toggle("active", appState.activeTags.has(tag));
     });
 }
 
 // Gerenciamento de ações
 function handleAction(action) {
-    switch(action) {
-        case 'clear-filters':
-            appState.activeCategory = 'todas';
-            appState.activeDifficulty = 'todas';
+    switch (action) {
+        case "clear-filters":
+            appState.activeCategory = "todas";
+            appState.activeDifficulty = "todas";
             appState.activeTags.clear();
-            appState.activeSearch = '';
-            
-            const searchInput = document.querySelector('.sidebar-search');
-            if (searchInput) searchInput.value = '';
-            
+            appState.activeSearch = "";
+
+            const searchInput = document.querySelector(".sidebar-search");
+            if (searchInput) searchInput.value = "";
+
             applyFilters();
             updateSidebarActiveStates();
             break;
-            
-        case 'random-card':
+
+        case "random-card":
             showRandomCard();
             if (appState.isMobile) closeMobileSidebar();
             break;
-            
-        case 'study-mode':
+
+        case "study-mode":
             toggleStudyMode();
             if (appState.isMobile) closeMobileSidebar();
             break;
@@ -386,48 +397,48 @@ function showCard(index) {
         showNoCardsMessage();
         return;
     }
-    
+
     if (index < 0) index = currentData.length - 1;
     if (index >= currentData.length) index = 0;
-    
+
     currentCardIndex = index;
     const card = currentData[currentCardIndex];
-    
+
     if (!card) {
-        console.error('Carta não encontrada no índice:', index);
+        console.error("Carta não encontrada no índice:", index);
         return;
     }
-    
-    const flashcard = document.querySelector('.flashcard');
-    const flashcardInner = document.querySelector('.flashcard-inner');
-    const questionEl = document.querySelector('.question');
-    const answerEl = document.querySelector('.answer');
-    
+
+    const flashcard = document.querySelector(".flashcard");
+    const flashcardInner = document.querySelector(".flashcard-inner");
+    const questionEl = document.querySelector(".question");
+    const answerEl = document.querySelector(".answer");
+
     if (!flashcard || !questionEl || !answerEl) {
-        console.error('Elementos do flashcard não encontrados');
+        console.error("Elementos do flashcard não encontrados");
         return;
     }
-    
+
     // Reset flip state
     isFlipped = false;
-    flashcard.classList.remove('flipped');
-    
+    flashcard.classList.remove("flipped");
+
     // Update content
-    questionEl.innerHTML = card.question || 'Pergunta não disponível';
-    answerEl.innerHTML = card.answer || 'Resposta não disponível';
-    
+    questionEl.innerHTML = card.question || "Pergunta não disponível";
+    answerEl.innerHTML = card.answer || "Resposta não disponível";
+
     // Render math
     renderMathInElement(questionEl);
     renderMathInElement(answerEl);
-    
+
     // Update category color
-    const cardFront = document.querySelector('.card-front');
-    const cardBack = document.querySelector('.card-back');
-    
+    const cardFront = document.querySelector(".card-front");
+    const cardBack = document.querySelector(".card-back");
+
     if (cardFront) {
         cardFront.style.borderColor = getCategoryColor(card.category);
     }
-    
+
     updateCardInfo(card);
     updateExplanation(card);
     updateProgressBar();
@@ -441,7 +452,8 @@ function nextCard() {
 
 function previousCard() {
     if (currentData.length === 0) return;
-    currentCardIndex = currentCardIndex > 0 ? currentCardIndex - 1 : currentData.length - 1;
+    currentCardIndex =
+        currentCardIndex > 0 ? currentCardIndex - 1 : currentData.length - 1;
     showCard(currentCardIndex);
 }
 
@@ -452,61 +464,63 @@ function showRandomCard() {
 }
 
 function flipCard() {
-    const flashcard = document.querySelector('.flashcard');
+    const flashcard = document.querySelector(".flashcard");
     isFlipped = !isFlipped;
-    flashcard.classList.toggle('flipped', isFlipped);
+    flashcard.classList.toggle("flipped", isFlipped);
 }
 
 // Modo estudo
 function toggleStudyMode() {
     studyMode = !studyMode;
     updateStudyModeUI();
-    
+
     if (studyMode) {
         sessionStats = {
             correct: 0,
             incorrect: 0,
             skipped: 0,
             startTime: Date.now(),
-            studyTime: 0
+            studyTime: 0,
         };
     }
 }
 
 function updateStudyModeUI() {
-    const studyControls = document.querySelector('.study-controls');
-    const normalControls = document.querySelector('.normal-controls');
-    const studyBtn = document.getElementById('studyBtn');
-    
+    const studyControls = document.querySelector(".study-controls");
+    const normalControls = document.querySelector(".normal-controls");
+    const studyBtn = document.getElementById("studyBtn");
+
     if (studyControls) {
-        studyControls.style.display = studyMode ? 'flex' : 'none';
+        studyControls.style.display = studyMode ? "flex" : "none";
     }
-    
+
     if (normalControls) {
-        normalControls.style.display = studyMode ? 'none' : 'flex';
+        normalControls.style.display = studyMode ? "none" : "flex";
     }
-    
+
     if (studyBtn) {
-        studyBtn.classList.toggle('active', studyMode);
-        studyBtn.innerHTML = studyMode 
+        studyBtn.classList.toggle("active", studyMode);
+        studyBtn.innerHTML = studyMode
             ? '<span class="btn-icon">⏹️</span> Parar Estudo'
             : '<span class="btn-icon">📚</span> Modo Estudo';
     }
-    
+
     // Atualizar botão na sidebar
-    const sidebarStudyBtn = document.querySelector('[data-action="study-mode"]');
+    const sidebarStudyBtn = document.querySelector(
+        '[data-action="study-mode"]'
+    );
     if (sidebarStudyBtn) {
-        sidebarStudyBtn.classList.toggle('active', studyMode);
+        sidebarStudyBtn.classList.toggle("active", studyMode);
     }
 }
 
 function answerCard(result) {
     sessionStats[result]++;
     sessionStats.studyTime = Date.now() - sessionStats.startTime;
-    
+
     // Feedback visual
     showAnswerFeedback(result);
-    
+
     // Próxima carta
     setTimeout(() => {
         nextCard();
@@ -514,11 +528,11 @@ function answerCard(result) {
 }
 
 function showAnswerFeedback(result) {
-    const flashcard = document.querySelector('.flashcard');
+    const flashcard = document.querySelector(".flashcard");
     const currentClass = flashcard.className;
-    
+
     flashcard.classList.add(`feedback-${result}`);
-    
+
     setTimeout(() => {
         flashcard.className = currentClass;
     }, 1000);
@@ -527,47 +541,49 @@ function showAnswerFeedback(result) {
 // Explicações
 function toggleExplanation() {
     appState.showExplanation = !appState.showExplanation;
-    const explanationContent = document.querySelector('.explanation-content');
-    const explanationBtn = document.getElementById('explanationBtn');
-    
+    const explanationContent = document.querySelector(".explanation-content");
+    const explanationBtn = document.getElementById("explanationBtn");
+
     if (explanationContent) {
-        explanationContent.classList.toggle('show', appState.showExplanation);
+        explanationContent.classList.toggle("show", appState.showExplanation);
     }
-    
+
     if (explanationBtn) {
-        explanationBtn.classList.toggle('active', appState.showExplanation);
-        const icon = explanationBtn.querySelector('.btn-icon');
+        explanationBtn.classList.toggle("active", appState.showExplanation);
+        const icon = explanationBtn.querySelector(".btn-icon");
         if (icon) {
-            icon.textContent = appState.showExplanation ? '📖' : '💡';
+            icon.textContent = appState.showExplanation ? "📖" : "💡";
         }
     }
 }
 
 function updateExplanation(card) {
-    const explanationText = document.querySelector('.explanation-text');
-    const explanationBtn = document.getElementById('explanationBtn');
-    
+    const explanationText = document.querySelector(".explanation-text");
+    const explanationBtn = document.getElementById("explanationBtn");
+
     if (!explanationText || !explanationBtn) return;
-    
+
     if (card.explanation && card.explanation.trim()) {
-        explanationBtn.style.display = 'inline-flex';
+        explanationBtn.style.display = "inline-flex";
         explanationText.innerHTML = card.explanation;
         renderMathInElement(explanationText);
     } else {
-        explanationBtn.style.display = 'none';
+        explanationBtn.style.display = "none";
         appState.showExplanation = false;
-        const explanationContent = document.querySelector('.explanation-content');
+        const explanationContent = document.querySelector(
+            ".explanation-content"
+        );
         if (explanationContent) {
-            explanationContent.classList.remove('show');
+            explanationContent.classList.remove("show");
         }
     }
 }
 
 // Estatísticas
 function toggleStatsPanel() {
-    const statsPanel = document.querySelector('.stats-panel');
+    const statsPanel = document.querySelector(".stats-panel");
     if (statsPanel) {
-        statsPanel.classList.toggle('open');
+        statsPanel.classList.toggle("open");
         updateStatsPanel();
     }
 }
@@ -581,16 +597,19 @@ function updateStatsPanel() {
 function updateGeneralStats() {
     const totalCards = allCards.length;
     const filteredCount = filteredCards.length;
-    const categoriesCount = new Set(allCards.map(card => card.category)).size;
-    const progress = filteredCount > 0 ? Math.round(((currentCardIndex + 1) / filteredCount) * 100) : 0;
-    
+    const categoriesCount = new Set(allCards.map((card) => card.category)).size;
+    const progress =
+        filteredCount > 0
+            ? Math.round(((currentCardIndex + 1) / filteredCount) * 100)
+            : 0;
+
     const statElements = {
-        'total-cards': totalCards,
-        'filtered-cards': filteredCount,
-        'categories-count': categoriesCount,
-        'current-progress': `${progress}%`
+        "total-cards": totalCards,
+        "filtered-cards": filteredCount,
+        "categories-count": categoriesCount,
+        "current-progress": `${progress}%`,
     };
-    
+
     Object.entries(statElements).forEach(([id, value]) => {
         const element = document.getElementById(id);
         if (element) element.textContent = value;
@@ -599,17 +618,18 @@ function updateGeneralStats() {
 
 function updateCategoryStats() {
     const categoryStats = {};
-    allCards.forEach(card => {
-        const category = card.category || 'Sem categoria';
+    allCards.forEach((card) => {
+        const category = card.category || "Sem categoria";
         categoryStats[category] = (categoryStats[category] || 0) + 1;
     });
-    
-    const container = document.querySelector('.category-stats');
+
+    const container = document.querySelector(".category-stats");
     if (!container) return;
-    
+
     container.innerHTML = Object.entries(categoryStats)
         .sort((a, b) => b[1] - a[1])
-        .map(([category, count]) => `
+        .map(
+            ([category, count]) => `
             <div class="category-stat-item">
                 <div class="category-stat-name">
                     <span style="color: ${getCategoryColor(category)}">●</span>
@@ -617,24 +637,30 @@ function updateCategoryStats() {
                 </div>
                 <div class="category-stat-value">${count}</div>
             </div>
-        `).join('');
+        `
+        )
+        .join("");
 }
 
 function updateSessionStats() {
     if (!studyMode) return;
-    
-    const total = sessionStats.correct + sessionStats.incorrect + sessionStats.skipped;
-    const accuracy = total > 0 ? Math.round((sessionStats.correct / total) * 100) : 0;
-    const timeSpent = Math.round((Date.now() - sessionStats.startTime) / 1000 / 60);
-    
+
+    const total =
+        sessionStats.correct + sessionStats.incorrect + sessionStats.skipped;
+    const accuracy =
+        total > 0 ? Math.round((sessionStats.correct / total) * 100) : 0;
+    const timeSpent = Math.round(
+        (Date.now() - sessionStats.startTime) / 1000 / 60
+    );
+
     const sessionElements = {
-        'session-correct': sessionStats.correct,
-        'session-incorrect': sessionStats.incorrect,
-        'session-skipped': sessionStats.skipped,
-        'session-accuracy': `${accuracy}%`,
-        'session-time': `${timeSpent} min`
+        "session-correct": sessionStats.correct,
+        "session-incorrect": sessionStats.incorrect,
+        "session-skipped": sessionStats.skipped,
+        "session-accuracy": `${accuracy}%`,
+        "session-time": `${timeSpent} min`,
     };
-    
+
     Object.entries(sessionElements).forEach(([id, value]) => {
         const element = document.getElementById(id);
         if (element) element.textContent = value;
@@ -645,69 +671,78 @@ function updateSessionStats() {
 function updateCounters() {
     // Atualizar contadores na sidebar
     const categoryCounters = {
-        'todas': allCards.length,
-        'permutacao': allCards.filter(c => c.category === 'permutacao').length,
-        'arranjo': allCards.filter(c => c.category === 'arranjo').length,
-        'combinacao': allCards.filter(c => c.category === 'combinacao').length,
-        'principios': allCards.filter(c => c.category === 'principios').length
+        todas: allCards.length,
+        permutacao: allCards.filter((c) => c.category === "permutacao").length,
+        arranjo: allCards.filter((c) => c.category === "arranjo").length,
+        combinacao: allCards.filter((c) => c.category === "combinacao").length,
+        principios: allCards.filter((c) => c.category === "principios").length,
     };
-    
+
     const difficultyCounters = {
-        'todas': allCards.length,
-        'facil': allCards.filter(c => c.difficulty === 'facil').length,
-        'medio': allCards.filter(c => c.difficulty === 'medio').length,
-        'dificil': allCards.filter(c => c.difficulty === 'dificil').length
+        todas: allCards.length,
+        basico: allCards.filter((c) => c.difficulty === "basico").length,
+        intermediario: allCards.filter((c) => c.difficulty === "intermediario").length,
     };
-    
+
     // Atualizar elementos na sidebar
     Object.entries(categoryCounters).forEach(([category, count]) => {
-        const counter = document.querySelector(`[data-category="${category}"] .nav-count`);
+        const counter = document.querySelector(
+            `[data-category="${category}"] .nav-count`
+        );
         if (counter) counter.textContent = count;
     });
-    
+
     Object.entries(difficultyCounters).forEach(([difficulty, count]) => {
-        const counter = document.querySelector(`[data-difficulty="${difficulty}"] .nav-count`);
+        const counter = document.querySelector(
+            `[data-difficulty="${difficulty}"] .nav-count`
+        );
         if (counter) counter.textContent = count;
     });
-    
+
     // Atualizar contadores de tags
     const tagCounts = {};
-    allCards.forEach(card => {
+    allCards.forEach((card) => {
         if (card.tags && Array.isArray(card.tags)) {
-            card.tags.forEach(tag => {
+            card.tags.forEach((tag) => {
                 tagCounts[tag] = (tagCounts[tag] || 0) + 1;
             });
         }
     });
-    
+
     Object.entries(tagCounts).forEach(([tag, count]) => {
-        const counter = document.querySelector(`[data-tag="${tag}"] .tag-count`);
+        const counter = document.querySelector(
+            `[data-tag="${tag}"] .tag-count`
+        );
         if (counter) counter.textContent = count;
     });
 }
 
 function updateProgressBar() {
-    const progressFill = document.querySelector('.progress-fill');
-    const progressText = document.querySelector('.progress-text');
-    const progressPercentage = document.querySelector('.progress-percentage');
-    
+    const progressFill = document.querySelector(".progress-fill");
+    const progressText = document.querySelector(".progress-text");
+    const progressPercentage = document.querySelector(".progress-percentage");
+
     if (filteredCards.length === 0) {
-        if (progressFill) progressFill.style.width = '0%';
-        if (progressText) progressText.textContent = 'Nenhuma carta encontrada';
-        if (progressPercentage) progressPercentage.textContent = '0%';
+        if (progressFill) progressFill.style.width = "0%";
+        if (progressText) progressText.textContent = "Nenhuma carta encontrada";
+        if (progressPercentage) progressPercentage.textContent = "0%";
         return;
     }
-    
-    const progress = Math.round(((currentCardIndex + 1) / filteredCards.length) * 100);
-    
+
+    const progress = Math.round(
+        ((currentCardIndex + 1) / filteredCards.length) * 100
+    );
+
     if (progressFill) {
         progressFill.style.width = `${progress}%`;
     }
-    
+
     if (progressText) {
-        progressText.textContent = `Carta ${currentCardIndex + 1} de ${filteredCards.length}`;
+        progressText.textContent = `Carta ${currentCardIndex + 1} de ${
+            filteredCards.length
+        }`;
     }
-    
+
     if (progressPercentage) {
         progressPercentage.textContent = `${progress}%`;
     }
@@ -715,25 +750,25 @@ function updateProgressBar() {
 
 function updateCardInfo(card) {
     // Atualizar informações do card atual se necessário
-    const cardElement = document.querySelector('.flashcard');
+    const cardElement = document.querySelector(".flashcard");
     if (cardElement) {
-        cardElement.setAttribute('data-category', card.category);
-        cardElement.setAttribute('data-difficulty', card.difficulty);
+        cardElement.setAttribute("data-category", card.category);
+        cardElement.setAttribute("data-difficulty", card.difficulty);
     }
 }
 
 function getCategoryColor(category) {
     const colors = {
-        'permutacao': 'var(--permutacao-color)',
-        'arranjo': 'var(--arranjo-color)',
-        'combinacao': 'var(--combinacao-color)',
-        'principios': 'var(--principios-color)'
+        permutacao: "var(--permutacao-color)",
+        arranjo: "var(--arranjo-color)",
+        combinacao: "var(--combinacao-color)",
+        principios: "var(--principios-color)",
     };
-    return colors[category] || 'var(--primary-color)';
+    return colors[category] || "var(--primary-color)";
 }
 
 function showNoCardsMessage() {
-    const flashcard = document.querySelector('.flashcard');
+    const flashcard = document.querySelector(".flashcard");
     if (flashcard) {
         flashcard.innerHTML = `
             <div class="flashcard-inner">
@@ -757,35 +792,39 @@ function renderSidebarContent() {
 }
 
 function renderTagsInSidebar() {
-    const tagsContainer = document.querySelector('.tags-grid');
+    const tagsContainer = document.querySelector(".tags-grid");
     if (!tagsContainer) return;
-    
+
     const allTags = new Set();
     const tagCounts = {};
-    
-    allCards.forEach(card => {
+
+    allCards.forEach((card) => {
         if (card.tags && Array.isArray(card.tags)) {
-            card.tags.forEach(tag => {
+            card.tags.forEach((tag) => {
                 allTags.add(tag);
                 tagCounts[tag] = (tagCounts[tag] || 0) + 1;
             });
         }
     });
-    
+
     const sortedTags = Array.from(allTags).sort();
-    
-    tagsContainer.innerHTML = sortedTags.map(tag => `
+
+    tagsContainer.innerHTML = sortedTags
+        .map(
+            (tag) => `
         <button class="tag-btn" data-tag="${tag}">
             <span>${tag}</span>
             <span class="tag-count">${tagCounts[tag] || 0}</span>
         </button>
-    `).join('');
-    
+    `
+        )
+        .join("");
+
     // Reconfigurar event listeners para as novas tags
-    tagsContainer.querySelectorAll('[data-tag]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+    tagsContainer.querySelectorAll("[data-tag]").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
             e.preventDefault();
-            const tag = btn.getAttribute('data-tag');
+            const tag = btn.getAttribute("data-tag");
             toggleTag(tag);
         });
     });
@@ -793,65 +832,65 @@ function renderTagsInSidebar() {
 
 // Teclado
 function handleKeyboard(e) {
-    if (e.target.tagName === 'INPUT') return;
-    
-    switch(e.key) {
-        case 'ArrowLeft':
-        case 'ArrowUp':
+    if (e.target.tagName === "INPUT") return;
+
+    switch (e.key) {
+        case "ArrowLeft":
+        case "ArrowUp":
             e.preventDefault();
             previousCard();
             break;
-        case 'ArrowRight':
-        case 'ArrowDown':
+        case "ArrowRight":
+        case "ArrowDown":
             e.preventDefault();
             nextCard();
             break;
-        case ' ':
+        case " ":
             e.preventDefault();
             flipCard();
             break;
-        case 'r':
-        case 'R':
+        case "r":
+        case "R":
             if (!e.ctrlKey && !e.metaKey) {
                 e.preventDefault();
                 showRandomCard();
             }
             break;
-        case 's':
-        case 'S':
+        case "s":
+        case "S":
             if (!e.ctrlKey && !e.metaKey) {
                 e.preventDefault();
                 toggleStudyMode();
             }
             break;
-        case 'e':
-        case 'E':
+        case "e":
+        case "E":
             if (!e.ctrlKey && !e.metaKey) {
                 e.preventDefault();
                 toggleExplanation();
             }
             break;
-        case 'Escape':
+        case "Escape":
             if (appState.sidebarOpen && appState.isMobile) {
                 closeMobileSidebar();
             }
             break;
     }
-    
+
     // Teclas do modo estudo
     if (studyMode && isFlipped) {
-        switch(e.key) {
-            case '1':
+        switch (e.key) {
+            case "1":
                 e.preventDefault();
-                answerCard('correct');
+                answerCard("correct");
                 break;
-            case '2':
+            case "2":
                 e.preventDefault();
-                answerCard('incorrect');
+                answerCard("incorrect");
                 break;
-            case '3':
+            case "3":
                 e.preventDefault();
-                answerCard('skipped');
+                answerCard("skipped");
                 break;
         }
     }
@@ -865,7 +904,7 @@ function setupResponsive() {
 function handleResize() {
     const wasMobile = appState.isMobile;
     appState.isMobile = window.innerWidth <= 768;
-    
+
     if (wasMobile !== appState.isMobile) {
         if (!appState.isMobile) {
             // Desktop: fechar sidebar móvel se estava aberta
@@ -885,21 +924,21 @@ function updateUI() {
 
 // Utilitário para renderização de matemática
 function renderMathInElement(element) {
-    if (typeof renderMathInElement !== 'undefined' && window.katex) {
+    if (typeof window.renderMathInElement !== "undefined" && window.katex) {
         try {
             window.renderMathInElement(element, {
                 delimiters: [
-                    {left: '$$', right: '$$', display: true},
-                    {left: '$', right: '$', display: false},
-                    {left: '\\[', right: '\\]', display: true},
-                    {left: '\\(', right: '\\)', display: false}
+                    { left: "$$", right: "$$", display: true },
+                    { left: "$", right: "$", display: false },
+                    { left: "\\[", right: "\\]", display: true },
+                    { left: "\\(", right: "\\)", display: false },
                 ],
                 throwOnError: false,
-                errorColor: '#cc0000',
-                strict: false
+                errorColor: "#cc0000",
+                strict: false,
             });
         } catch (error) {
-            console.warn('Erro ao renderizar matemática:', error);
+            console.warn("Erro ao renderizar matemática:", error);
         }
     }
 }
