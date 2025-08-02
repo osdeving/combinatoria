@@ -26,11 +26,53 @@ let appState = {
     isMobile: window.innerWidth <= 768,
 };
 
+// Função de teste isolado de LaTeX
+function testLatexNow() {
+    const testContent = document.getElementById('test-content');
+    const testResult = document.getElementById('test-result');
+    
+    if (!testContent || !testResult) return;
+    
+    // Resetar conteúdo
+    testContent.innerHTML = '$x^2 + y^2 = z^2$ e $$\\int_0^1 x dx = \\frac{1}{2}$$';
+    
+    // Verificar disponibilidade
+    const katexAvailable = !!window.katex;
+    const renderAvailable = !!window.renderMathInElement;
+    
+    testResult.innerHTML = `KaTeX: ${katexAvailable ? '✓' : '✗'}, Render: ${renderAvailable ? '✓' : '✗'}`;
+    
+    if (katexAvailable && renderAvailable) {
+        try {
+            window.renderMathInElement(testContent, {
+                delimiters: [
+                    { left: '$$', right: '$$', display: true },
+                    { left: '$', right: '$', display: false }
+                ],
+                throwOnError: false
+            });
+            testResult.innerHTML += ' - Renderizado!';
+        } catch (e) {
+            testResult.innerHTML += ` - Erro: ${e.message}`;
+        }
+    } else {
+        testResult.innerHTML += ' - Bibliotecas não carregadas';
+    }
+}
+
+// Tornar a função global
+window.testLatexNow = testLatexNow;
+
 // Inicialização (otimizada)
 document.addEventListener("DOMContentLoaded", function () {
     loadFlashcards();
     setupEventListeners();
     setupResponsive();
+    
+    // Testar LaTeX após um pequeno delay
+    setTimeout(() => {
+        testLatexNow();
+    }, 1000);
 });
 
 // Carregamento dos dados
@@ -424,7 +466,7 @@ function showCard(index) {
     // Update content - usar as propriedades corretas do JSON
     const question = card.q || card.question || "Pergunta não disponível";
     const answer = card.a || card.answer || "Resposta não disponível";
-    
+
     questionEl.innerHTML = question;
     answerEl.innerHTML = answer;
 
@@ -941,7 +983,7 @@ function renderMathInElement(element) {
     } catch (error) {
         console.error("Erro ao renderizar matemática:", error);
     }
-}// Função simplificada para debug (removida para otimização)
+} // Função simplificada para debug (removida para otimização)
 // window.testMath e window.forceRenderMath removidas
 
 // Funções de wrapper para compatibilidade com HTML

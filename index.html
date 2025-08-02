@@ -348,19 +348,39 @@
             </div>
         </div>
 
-        <!-- Scripts KaTeX -->
-        <script
-            src="lib/katex.min.js"
-            onload="console.log('KaTeX carregado:', !!window.katex)"
-            onerror="console.error('Erro ao carregar KaTeX')"
-        ></script>
-        <script
-            src="lib/auto-render.min.js"
-            onload="console.log('Auto-render carregado:', !!window.renderMathInElement)"
-            onerror="console.error('Erro ao carregar auto-render')"
-        ></script>
+        <!-- Teste de LaTeX isolado (canto da página) -->
+        <div id="latex-test" style="position: fixed; top: 10px; right: 10px; background: #fff; border: 2px solid #333; padding: 10px; z-index: 9999; font-size: 12px; max-width: 200px;">
+            <div style="font-weight: bold; margin-bottom: 5px;">Teste LaTeX:</div>
+            <div id="test-content">$x^2 + y^2 = z^2$</div>
+            <div style="margin-top: 5px;">
+                <button onclick="testLatexNow()" style="font-size: 10px;">Testar Agora</button>
+                <button onclick="document.getElementById('latex-test').style.display='none'" style="font-size: 10px;">Fechar</button>
+            </div>
+            <div id="test-result" style="margin-top: 5px; font-size: 10px; color: #666;"></div>
+        </div>
 
+        <!-- Scripts KaTeX -->
+        <script src="lib/katex.min.js"></script>
+        <script src="lib/auto-render.min.js"></script>
+        
         <!-- Script da aplicação -->
-        <script src="script.js"></script>
+        <script>
+            // Aguardar carregamento completo do KaTeX antes de carregar a aplicação
+            if (window.katex && window.renderMathInElement) {
+                console.log('KaTeX carregado imediatamente');
+                loadApp();
+            } else {
+                window.addEventListener('load', function() {
+                    console.log('KaTeX carregado após window.load:', !!window.katex, !!window.renderMathInElement);
+                    setTimeout(loadApp, 100);
+                });
+            }
+            
+            function loadApp() {
+                const script = document.createElement('script');
+                script.src = 'script.js';
+                document.head.appendChild(script);
+            }
+        </script>
     </body>
 </html>
