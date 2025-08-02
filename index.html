@@ -127,51 +127,95 @@
                     </div>
                 </div>
             </div>
-            <div class="controls">
-                <button
-                    onclick="prevCard()"
-                    title="Anterior"
-                    aria-label="Anterior"
-                    class="btn btn-secondary"
-                >
-                    <span class="btn-icon">←</span> Anterior
-                </button>
-                <button
-                    onclick="nextCard()"
-                    title="Próximo"
-                    aria-label="Próximo"
-                    class="btn btn-secondary"
-                >
-                    Próximo <span class="btn-icon">→</span>
-                </button>
-                <button
-                    onclick="flipCard()"
-                    id="flipBtn"
-                    title="Mostrar resposta"
-                    aria-label="Mostrar resposta"
-                    class="btn btn-primary"
-                >
-                    <span class="btn-icon">🔄</span> Mostrar resposta
-                </button>
-                <button
-                    onclick="toggleReverse()"
-                    title="Inverter frente/verso"
-                    aria-label="Inverter"
-                    class="btn btn-secondary"
-                >
-                    <span class="btn-icon">🔀</span> Inverter
-                </button>
-                <button
-                    onclick="shuffleCards()"
-                    title="Embaralhar"
-                    aria-label="Embaralhar"
-                    class="btn btn-secondary"
-                >
-                    <span class="btn-icon">🎲</span> Embaralhar
-                </button>
-            </div>
+                <div class="controls">
+                    <button
+                        onclick="prevCard()"
+                        title="Anterior"
+                        aria-label="Anterior"
+                        class="btn btn-secondary"
+                    >
+                        <span class="btn-icon">←</span> Anterior
+                    </button>
+                    <button
+                        onclick="nextCard()"
+                        title="Próximo"
+                        aria-label="Próximo"
+                        class="btn btn-secondary"
+                    >
+                        Próximo <span class="btn-icon">→</span>
+                    </button>
+                    <button
+                        onclick="flipCard()"
+                        id="flipBtn"
+                        title="Mostrar resposta"
+                        aria-label="Mostrar resposta"
+                        class="btn btn-primary"
+                    >
+                        <span class="btn-icon">🔄</span> Mostrar resposta
+                    </button>
+                    <button
+                        onclick="toggleReverse()"
+                        title="Inverter frente/verso"
+                        aria-label="Inverter"
+                        class="btn btn-secondary"
+                    >
+                        <span class="btn-icon">🔀</span> Inverter
+                    </button>
+                    <button
+                        onclick="shuffleCards()"
+                        title="Embaralhar"
+                        aria-label="Embaralhar"
+                        class="btn btn-secondary"
+                    >
+                        <span class="btn-icon">🎲</span> Embaralhar
+                    </button>
+                    <button
+                        onclick="toggleStudyMode()"
+                        id="studyModeBtn"
+                        title="Modo de estudo focado"
+                        aria-label="Modo estudo"
+                        class="btn btn-accent"
+                    >
+                        <span class="btn-icon">🎯</span> Modo Estudo
+                    </button>
+                </div>
 
-            <!-- Seção de Explicação -->
+                <!-- Painel de estatísticas -->
+                <div class="stats-panel" id="statsPanel">
+                    <div class="stats-header">
+                        <h3>📊 Estatísticas de Estudo</h3>
+                        <button onclick="toggleStatsPanel()" class="stats-close">✕</button>
+                    </div>
+                    <div class="stats-content">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="totalCardsViewed">0</div>
+                                <div class="stat-label">Cards Visualizados</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="studyTime">00:00</div>
+                                <div class="stat-label">Tempo de Estudo</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="currentStreak">0</div>
+                                <div class="stat-label">Sequência Atual</div>
+                            </div>
+                        </div>
+                        
+                        <div class="categories-breakdown">
+                            <h4>📈 Por Categoria</h4>
+                            <div class="category-stats" id="categoryStats">
+                                <!-- Será preenchido dinamicamente -->
+                            </div>
+                        </div>
+                        
+                        <div class="study-actions">
+                            <button onclick="resetStats()" class="btn btn-secondary">
+                                <span class="btn-icon">🔄</span> Reset Estatísticas
+                            </button>
+                        </div>
+                    </div>
+                </div>            <!-- Seção de Explicação -->
             <div class="explanation-section">
                 <button
                     onclick="toggleExplanation()"

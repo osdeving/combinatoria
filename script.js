@@ -11,6 +11,15 @@ let currentFilter = {
     search: ''
 };
 
+// Sistema de estatísticas
+let studyStats = {
+    cardsViewed: 0,
+    startTime: null,
+    currentStreak: 0,
+    categoryViews: {},
+    isStudyMode: false
+};
+
 async function loadCards() {
     try {
         const res = await fetch("cards.json");
@@ -117,6 +126,11 @@ function showCard() {
     
     // Atualizar progresso
     updateProgressDisplay(current + 1, cards.length);
+
+    // Registrar visualização para estatísticas
+    if (studyStats.isStudyMode) {
+        recordCardView(card);
+    }
 
     // Atualizar explicação
     updateExplanation();
@@ -358,6 +372,157 @@ function loadPopularTags() {
             </button>
         `).join('');
     }
+}
+
+// Sistema de Estatísticas
+function toggleStudyMode() {
+    studyStats.isStudyMode = !studyStats.isStudyMode;
+    const studyBtn = document.getElementById('studyModeBtn');
+    
+    if (studyStats.isStudyMode) {
+        // Iniciar modo de estudo
+        studyStats.startTime = Date.now();
+        studyStats.cardsViewed = 0;
+        studyStats.currentStreak = 0;
+        studyStats.categoryViews = {};
+        
+        studyBtn.innerHTML = '<span class="btn-icon">⏸️</span> Parar Estudo';
+        studyBtn.classList.add('active');
+        
+        // Mostrar painel de estatísticas
+        toggleStatsPanel(true);
+        
+        // Iniciar timer
+        startStudyTimer();
+    } else {
+        // Parar modo de estudo
+        studyBtn.innerHTML = '<span class="btn-icon">🎯</span> Modo Estudo';
+        studyBtn.classList.remove('active');
+        
+        stopStudyTimer();
+    }
+}
+
+function toggleStatsPanel(forceOpen = false) {
+    const statsPanel = document.getElementById('statsPanel');
+    const isOpen = statsPanel.classList.contains('open');
+    
+    if (forceOpen || !isOpen) {
+        statsPanel.classList.add('open');
+        updateStatsDisplay();
+        
+        // Criar overlay para mobile
+        if (window.innerWidth <= 768) {
+            createStatsOverlay();
+        }
+    } else {
+        statsPanel.classList.remove('open');
+        removeStatsOverlay();
+    }
+}
+
+function createStatsOverlay() {
+    if (document.getElementById('statsOverlay')) return;
+    
+    const overlay = document.createElement('div');
+    overlay.id = 'statsOverlay';
+    overlay.className = 'stats-overlay show';
+    overlay.onclick = () => toggleStatsPanel();
+    document.body.appendChild(overlay);
+}
+
+function removeStatsOverlay() {
+    const overlay = document.getElementById('statsOverlay');
+    if (overlay) {
+        overlay.remove();
+    }
+}
+
+function recordCardView(card) {
+    studyStats.cardsViewed++;
+    studyStats.currentStreak++;
+    
+    // Registrar por categoria
+    const category = card.category || 'outros';
+    studyStats.categoryViews[category] = (studyStats.categoryViews[category] || 0) + 1;
+    
+    updateStatsDisplay();
+}
+
+function updateStatsDisplay() {
+    // Atualizar cards visualizados
+    const totalCardsViewed = document.getElementById('totalCardsViewed');
+    if (totalCardsViewed) {
+        totalCardsViewed.textContent = studyStats.cardsViewed;
+    }
+    
+    // Atualizar sequência atual
+    const currentStreak = document.getElementById('currentStreak');
+    if (currentStreak) {
+        currentStreak.textContent = studyStats.currentStreak;
+    }
+    
+    // Atualizar estatísticas por categoria
+    updateCategoryStatsDisplay();
+}
+
+function updateCategoryStatsDisplay() {
+    const categoryStatsContainer = document.getElementById('categoryStats');
+    if (!categoryStatsContainer) return;
+    
+    const categoryMeta = cardsData.metadata?.categories || {};
+    
+    const statsHTML = Object.entries(studyStats.categoryViews)
+        .sort(([,a], [,b]) => b - a)
+        .map(([category, count]) => {
+            const meta = categoryMeta[category];
+            const icon = meta?.icon || '📚';
+            const name = meta?.name || category;
+            
+            return `
+                <div class="category-stat-item">
+                    <div class="category-stat-name">
+                        <span>${icon}</span>
+                        <span>${name}</span>
+                    </div>
+                    <div class="category-stat-value">${count}</div>
+                </div>
+            `;
+        }).join('');
+    
+    categoryStatsContainer.innerHTML = statsHTML || '<p style="text-align: center; color: var(--text-secondary);">Nenhum card visualizado ainda</p>';
+}
+
+let studyTimer;
+function startStudyTimer() {
+    studyTimer = setInterval(() => {
+        if (studyStats.startTime) {
+            const elapsed = Date.now() - studyStats.startTime;
+            const minutes = Math.floor(elapsed / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            
+            const studyTimeElement = document.getElementById('studyTime');
+            if (studyTimeElement) {
+                studyTimeElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+    }, 1000);
+}
+
+function stopStudyTimer() {
+    if (studyTimer) {
+        clearInterval(studyTimer);
+        studyTimer = null;
+    }
+}
+
+function resetStats() {
+    studyStats.cardsViewed = 0;
+    studyStats.currentStreak = 0;
+    studyStats.categoryViews = {};
+    studyStats.startTime = studyStats.isStudyMode ? Date.now() : null;
+    
+    updateStatsDisplay();
 }function nextCard() {
     current = (current + 1) % cards.length;
     showCard();
