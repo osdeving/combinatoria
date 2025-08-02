@@ -888,6 +888,8 @@ body {
 @media (max-width: 768px) {
     .sidebar {
         transform: translateX(-100%);
+        width: 85vw;
+        max-width: 320px;
     }
 
     .sidebar.open {
@@ -913,6 +915,10 @@ body {
 
     .progress-section {
         padding: 1rem;
+        margin: 0 -1rem 1rem -1rem;
+        background: var(--surface);
+        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        box-shadow: var(--shadow-sm);
     }
 
     .progress-info {
@@ -923,6 +929,7 @@ body {
 
     .progress-stats {
         gap: 0.5rem;
+        flex-wrap: wrap;
     }
 
     .stat-item {
@@ -932,6 +939,8 @@ body {
 
     .flashcard {
         height: 300px;
+        margin: 0 auto;
+        max-width: 100%;
     }
 
     .card-face {
@@ -941,20 +950,38 @@ body {
     .question,
     .answer {
         font-size: 1.1rem;
+        line-height: 1.6;
     }
 
     .controls {
         gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
     }
 
     .btn {
         padding: 0.6rem 1rem;
         font-size: 0.85rem;
         min-width: 100px;
+        flex: 1;
+        max-width: 140px;
+    }
+
+    .explanation-section {
+        margin-top: 1.5rem;
+    }
+
+    .explanation-toggle {
+        width: 100%;
+        text-align: center;
     }
 
     .nav-btn {
         padding: 0.6rem;
+    }
+
+    .nav-btn.compact {
+        padding: 0.5rem 0.6rem;
     }
 
     .nav-name {
@@ -963,6 +990,24 @@ body {
 
     .nav-desc {
         font-size: 0.7rem;
+        line-height: 1.4;
+    }
+
+    .tags-grid {
+        gap: 0.3rem;
+    }
+
+    .tag-btn {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    .search-container {
+        margin: 0.5rem 0;
+    }
+
+    .sidebar-search {
+        font-size: 0.9rem;
     }
 
     .stats-panel {
@@ -988,18 +1033,37 @@ body {
         padding: 0.5rem;
     }
 
+    .mobile-header {
+        margin: -1rem -1rem 1rem -1rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .mobile-title {
+        font-size: 1.1rem;
+    }
+
+    .progress-section {
+        margin: 0 -0.5rem 1rem -0.5rem;
+        padding: 0.75rem;
+        border-radius: 0;
+    }
+
     .controls {
         flex-direction: column;
         align-items: center;
+        gap: 0.5rem;
     }
 
     .btn {
         width: 100%;
         max-width: 280px;
+        padding: 0.75rem;
+        font-size: 0.9rem;
     }
 
     .flashcard {
         height: 280px;
+        margin-bottom: 1rem;
     }
 
     .card-face {
@@ -1009,18 +1073,91 @@ body {
     .question,
     .answer {
         font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    .sidebar {
+        width: 90vw;
+        max-width: none;
     }
 
     .nav-section {
         padding: 0 0.5rem;
     }
 
+    .nav-section-title {
+        font-size: 0.9rem;
+        padding: 0.5rem 0;
+    }
+
     .sidebar-nav {
         padding-bottom: 1rem;
     }
+
+    .nav-btn {
+        padding: 0.5rem;
+    }
+
+    .nav-content {
+        gap: 0.25rem;
+    }
+
+    .explanation-text {
+        padding: 1rem;
+        font-size: 0.95rem;
+    }
 }
 
-/* Dark mode support */
+/* Touch improvements for mobile */
+@media (hover: none) and (pointer: coarse) {
+    .btn:hover {
+        transform: none;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .btn:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+    
+    .nav-btn:hover {
+        background: var(--surface-hover);
+        transform: none;
+    }
+    
+    .nav-btn:active {
+        background: var(--primary-color);
+        color: white;
+        transform: scale(0.98);
+    }
+    
+    .flashcard:hover {
+        transform: none;
+    }
+    
+    .flashcard:active {
+        transform: scale(0.99);
+    }
+    
+    .mobile-menu-btn:active {
+        transform: scale(0.95);
+        background: var(--primary-hover);
+    }
+}
+
+/* Improve tap targets for mobile */
+@media (max-width: 768px) {
+    .btn, .nav-btn, .mobile-menu-btn, .search-clear, .tag-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .stats-close {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0.5rem;
+    }
+}
 @media (prefers-color-scheme: dark) {
     :root {
         --background: #1a202c;
