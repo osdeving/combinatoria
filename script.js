@@ -28,35 +28,38 @@ let appState = {
 
 // Função de teste isolado de LaTeX
 function testLatexNow() {
-    const testContent = document.getElementById('test-content');
-    const testResult = document.getElementById('test-result');
-    
+    const testContent = document.getElementById("test-content");
+    const testResult = document.getElementById("test-result");
+
     if (!testContent || !testResult) return;
-    
+
     // Resetar conteúdo
-    testContent.innerHTML = '$x^2 + y^2 = z^2$ e $$\\int_0^1 x dx = \\frac{1}{2}$$';
-    
+    testContent.innerHTML =
+        "$x^2 + y^2 = z^2$ e $$\\int_0^1 x dx = \\frac{1}{2}$$";
+
     // Verificar disponibilidade
     const katexAvailable = !!window.katex;
     const renderAvailable = !!window.renderMathInElement;
-    
-    testResult.innerHTML = `KaTeX: ${katexAvailable ? '✓' : '✗'}, Render: ${renderAvailable ? '✓' : '✗'}`;
-    
+
+    testResult.innerHTML = `KaTeX: ${katexAvailable ? "✓" : "✗"}, Render: ${
+        renderAvailable ? "✓" : "✗"
+    }`;
+
     if (katexAvailable && renderAvailable) {
         try {
             window.renderMathInElement(testContent, {
                 delimiters: [
-                    { left: '$$', right: '$$', display: true },
-                    { left: '$', right: '$', display: false }
+                    { left: "$$", right: "$$", display: true },
+                    { left: "$", right: "$", display: false },
                 ],
-                throwOnError: false
+                throwOnError: false,
             });
-            testResult.innerHTML += ' - Renderizado!';
+            testResult.innerHTML += " - Renderizado!";
         } catch (e) {
             testResult.innerHTML += ` - Erro: ${e.message}`;
         }
     } else {
-        testResult.innerHTML += ' - Bibliotecas não carregadas';
+        testResult.innerHTML += " - Bibliotecas não carregadas";
     }
 }
 
@@ -68,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
     loadFlashcards();
     setupEventListeners();
     setupResponsive();
-    
+
     // Testar LaTeX após um pequeno delay
     setTimeout(() => {
         testLatexNow();
@@ -472,8 +475,8 @@ function showCard(index) {
 
     // Render math apenas se KaTeX estiver disponível
     if (window.katex && window.renderMathInElement) {
-        renderMathInElement(questionEl);
-        renderMathInElement(answerEl);
+        renderMathContent(questionEl);
+        renderMathContent(answerEl);
     }
 
     // Update card styling
@@ -609,7 +612,7 @@ function updateExplanation(card) {
     if (card.explanation && card.explanation.trim()) {
         explanationBtn.style.display = "inline-flex";
         explanationText.innerHTML = card.explanation;
-        renderMathInElement(explanationText);
+        renderMathContent(explanationText);
     } else {
         explanationBtn.style.display = "none";
         appState.showExplanation = false;
@@ -964,8 +967,8 @@ function updateUI() {
     updateStudyModeUI();
 }
 
-// Utilitário para renderização de matemática (otimizado)
-function renderMathInElement(element) {
+// Utilitário para renderização de matemática (renomeado para evitar conflito)
+function renderMathContent(element) {
     if (!element || !window.katex || !window.renderMathInElement) return;
 
     try {
