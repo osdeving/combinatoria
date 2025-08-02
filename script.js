@@ -116,15 +116,13 @@ function setupEventListeners() {
     const prevBtn = document.getElementById("prevBtn");
     const randomBtn = document.getElementById("randomBtn");
     const studyBtn = document.getElementById("studyBtn");
-    const explanationBtn = document.getElementById("explanationBtn");
     const statsBtn = document.getElementById("statsBtn");
 
     if (nextBtn) nextBtn.addEventListener("click", nextCard);
     if (prevBtn) prevBtn.addEventListener("click", previousCard);
     if (randomBtn) randomBtn.addEventListener("click", showRandomCard);
     if (studyBtn) studyBtn.addEventListener("click", toggleStudyMode);
-    if (explanationBtn)
-        explanationBtn.addEventListener("click", toggleExplanation);
+    // Removido explanationBtn event listener - usando onclick no HTML
     if (statsBtn) statsBtn.addEventListener("click", toggleStatsPanel);
 
     // Botões do modo estudo
@@ -543,24 +541,7 @@ function showAnswerFeedback(result) {
     }, 1000);
 }
 
-// Explicações
-function toggleExplanation() {
-    appState.showExplanation = !appState.showExplanation;
-    const explanationContent = document.querySelector(".explanation-content");
-    const explanationBtn = document.getElementById("explanationBtn");
-
-    if (explanationContent) {
-        explanationContent.classList.toggle("show", appState.showExplanation);
-    }
-
-    if (explanationBtn) {
-        explanationBtn.classList.toggle("active", appState.showExplanation);
-        const icon = explanationBtn.querySelector(".btn-icon");
-        if (icon) {
-            icon.textContent = appState.showExplanation ? "📖" : "💡";
-        }
-    }
-}
+// Explicações - função removida, usando window.toggleExplanation
 
 function updateExplanation(card) {
     const explanationText = document.getElementById("explanationText");
@@ -1004,25 +985,27 @@ window.toggleReverse = function () {
 window.toggleExplanation = function () {
     console.log("=== TOGGLE EXPLANATION DEBUG ===");
     console.log("Estado anterior:", appState.showExplanation);
-    
+
     appState.showExplanation = !appState.showExplanation;
     console.log("Novo estado:", appState.showExplanation);
-    
+
     const explanationContent = document.getElementById("explanationContent");
     const explanationBtn = document.getElementById("explanationBtn");
-    
+
     console.log("Elementos encontrados:", {
         explanationContent: !!explanationContent,
         explanationBtn: !!explanationBtn,
     });
-    
+
     if (explanationContent) {
         console.log("Classes antes:", explanationContent.classList.toString());
         console.log("Display antes:", explanationContent.style.display);
-        
+
         explanationContent.classList.toggle("show", appState.showExplanation);
-        explanationContent.style.display = appState.showExplanation ? "block" : "none";
-        
+        explanationContent.style.display = appState.showExplanation
+            ? "block"
+            : "none";
+
         console.log("Classes depois:", explanationContent.classList.toString());
         console.log("Display depois:", explanationContent.style.display);
     }
