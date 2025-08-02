@@ -523,6 +523,20 @@ function resetStats() {
     studyStats.startTime = studyStats.isStudyMode ? Date.now() : null;
     
     updateStatsDisplay();
+}
+
+// Função para toggle da busca mobile
+function toggleMobileSearch() {
+    const searchSection = document.getElementById('searchSection');
+    const toggleBtn = document.getElementById('mobileSearchToggle');
+    
+    if (searchSection.classList.contains('mobile-visible')) {
+        searchSection.classList.remove('mobile-visible');
+        toggleBtn.innerHTML = '<span class="btn-icon">🔍</span> Buscar';
+    } else {
+        searchSection.classList.add('mobile-visible');
+        toggleBtn.innerHTML = '<span class="btn-icon">✕</span> Fechar';
+    }
 }function nextCard() {
     current = (current + 1) % cards.length;
     showCard();

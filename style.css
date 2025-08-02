@@ -283,6 +283,26 @@ body {
     font-size: 0.7rem;
 }
 
+/* Botão de busca mobile */
+.mobile-search-toggle {
+    display: none;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius);
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 1rem;
+}
+
+.mobile-search-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
 /* Conteúdo principal */
 .main-content {
     padding: 2rem;
@@ -837,6 +857,14 @@ body {
     
     .search-section {
         display: none; /* Esconder busca em telas muito pequenas para economizar espaço */
+    }
+    
+    .mobile-search-toggle {
+        display: block; /* Mostrar botão de busca mobile */
+    }
+    
+    .search-section.mobile-visible {
+        display: block; /* Mostrar quando ativado */
     }
     
     .progress-section {

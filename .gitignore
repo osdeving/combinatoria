@@ -1,0 +1,43 @@
+# Arquivos de backup
+backup/
+*_backup.json
+*_backup.js
+*_backup.css
+*_backup.html
+cards_flat.json
+cards_structured.json
+
+# Arquivos temporários
+*.tmp
+*.temp
+*~
+
+# Logs de desenvolvimento
+debug.log
+error.log
+
+# Cache do navegador
+.cache/
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Arquivos de editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node modules (se usar Node.js para scripts)
+node_modules/
+package-lock.json
+
+# Arquivos de teste
+test_output/
+test_results/
+
+# Arquivos de estatísticas locais
+stats.json
+user_progress.json
