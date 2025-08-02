@@ -183,7 +183,79 @@ body {
 .main-content {
     padding: 2rem;
 }
-/* Progress Bar */
+
+/* Progress Section */
+.progress-section {
+    margin-bottom: 2rem;
+    background: var(--background);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.progress-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.progress-stats {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: var(--surface);
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.stat-icon {
+    font-size: 0.9rem;
+}
+
+.progress-bar {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-percentage {
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* Progress Bar - Estilo antigo mantido para compatibilidade */
 .progress {
     text-align: center;
     font-size: 0.9rem;
@@ -380,8 +452,54 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
-        padding: 1.5rem;
         margin: 10px;
+    }
+    
+    .header {
+        padding: 1rem 1.5rem;
+    }
+    
+    .title {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .category-nav {
+        gap: 0.3rem;
+    }
+    
+    .category-btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    .category-name {
+        display: none; /* Mostrar só ícones em mobile */
+    }
+    
+    .difficulty-filters {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .main-content {
+        padding: 1.5rem;
+    }
+    
+    .progress-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .progress-stats {
+        gap: 0.5rem;
+    }
+    
+    .stat-item {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
     }
 
     .flashcard {
@@ -409,6 +527,35 @@ body {
 }
 
 @media (max-width: 480px) {
+    .header {
+        padding: 1rem;
+    }
+    
+    .title {
+        font-size: 1.2rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .category-nav {
+        justify-content: center;
+    }
+    
+    .category-btn {
+        min-width: 50px;
+        padding: 0.5rem;
+    }
+    
+    .category-count {
+        font-size: 0.7rem;
+        padding: 0.1rem 0.4rem;
+    }
+    
+    .progress-section {
+        padding: 1rem;
+    }
+    
     .controls {
         flex-direction: column;
         align-items: center;

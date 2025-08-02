@@ -90,7 +90,7 @@ function showCard() {
     if (!cards.length) {
         document.getElementById("question").innerHTML = "Nenhum card encontrado para os filtros selecionados";
         document.getElementById("answer").innerHTML = "Tente alterar os filtros";
-        document.getElementById("progress").textContent = "0 de 0";
+        updateProgressDisplay(0, 0);
         return;
     }
     
@@ -101,16 +101,8 @@ function showCard() {
     document.getElementById("question").innerHTML = front || "Carregando...";
     document.getElementById("answer").innerHTML = back || "Sem resposta";
     
-    // Mostrar informações da categoria atual
-    const categoryInfo = currentFilter.category !== 'all' 
-        ? ` (${currentFilter.category.charAt(0).toUpperCase() + currentFilter.category.slice(1)})` 
-        : '';
-    
-    const difficultyInfo = currentFilter.difficulty !== 'all' 
-        ? ` - ${currentFilter.difficulty.charAt(0).toUpperCase() + currentFilter.difficulty.slice(1)}` 
-        : '';
-        
-    document.getElementById("progress").textContent = `Card ${current + 1} de ${cards.length}${categoryInfo}${difficultyInfo}`;
+    // Atualizar progresso
+    updateProgressDisplay(current + 1, cards.length);
 
     // Atualizar explicação
     updateExplanation();
@@ -121,6 +113,47 @@ function showCard() {
 
     // Delay para garantir que o DOM foi atualizado antes de renderizar o KaTeX
     setTimeout(() => renderMathInCard(), 50);
+}
+
+function updateProgressDisplay(current, total) {
+    // Atualizar texto do progresso
+    const progressElement = document.getElementById("progress");
+    if (progressElement) {
+        progressElement.textContent = `Card ${current} de ${total}`;
+    }
+    
+    // Atualizar barra de progresso
+    const progressFill = document.getElementById("progressFill");
+    const progressPercentage = document.getElementById("progressPercentage");
+    
+    if (total > 0) {
+        const percentage = Math.round((current / total) * 100);
+        if (progressFill) progressFill.style.width = `${percentage}%`;
+        if (progressPercentage) progressPercentage.textContent = `${percentage}%`;
+    } else {
+        if (progressFill) progressFill.style.width = '0%';
+        if (progressPercentage) progressPercentage.textContent = '0%';
+    }
+    
+    // Atualizar estatísticas
+    updateStatsDisplay();
+}
+
+function updateStatsDisplay() {
+    const currentCategoryElement = document.getElementById("currentCategory");
+    const currentDifficultyElement = document.getElementById("currentDifficulty");
+    
+    if (currentCategoryElement) {
+        const categoryName = currentFilter.category === 'all' ? 'Todas' : 
+            currentFilter.category.charAt(0).toUpperCase() + currentFilter.category.slice(1);
+        currentCategoryElement.textContent = categoryName;
+    }
+    
+    if (currentDifficultyElement) {
+        const difficultyName = currentFilter.difficulty === 'all' ? 'Todas' : 
+            currentFilter.difficulty.charAt(0).toUpperCase() + currentFilter.difficulty.slice(1);
+        currentDifficultyElement.textContent = difficultyName;
+    }
 }
 
 function updateExplanation() {
@@ -168,6 +201,7 @@ function setCategory(category) {
     applyFilters();
     current = 0;
     showCard();
+    updateStatsDisplay();
 }
 
 function setDifficulty(difficulty) {
@@ -176,6 +210,7 @@ function setDifficulty(difficulty) {
     applyFilters();
     current = 0;
     showCard();
+    updateStatsDisplay();
 }
 
 function updateCategoryButtons() {

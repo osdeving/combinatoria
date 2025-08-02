@@ -67,7 +67,26 @@
 
             <!-- Conteúdo principal -->
             <div class="main-content">
-                <div class="progress" id="progress"></div>
+                <!-- Barra de progresso visual -->
+                <div class="progress-section">
+                    <div class="progress-info">
+                        <div class="progress-text" id="progress">Card 1 de 37</div>
+                        <div class="progress-stats" id="progressStats">
+                            <span class="stat-item">
+                                <span class="stat-icon">🎯</span>
+                                <span id="currentCategory">Todas</span>
+                            </span>
+                            <span class="stat-item">
+                                <span class="stat-icon">📊</span>
+                                <span id="currentDifficulty">Todas</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-percentage" id="progressPercentage">0%</div>
+                </div>
             <div
                 class="flashcard"
                 id="flashcard"
