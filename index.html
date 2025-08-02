@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Flashcards de Combinatória</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+        />
+        <link rel="stylesheet" href="style.css" />
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="progress" id="progress"></div>
+            <div
+                class="flashcard"
+                id="flashcard"
+                tabindex="0"
+                aria-label="Flashcard"
+                role="button"
+            >
+                <div class="flashcard-inner">
+                    <div class="card-face card-front">
+                        <div class="question" id="question">
+                            Carregando pergunta...
+                        </div>
+                    </div>
+                    <div class="card-face card-back">
+                        <div class="answer" id="answer"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="controls">
+                <button
+                    onclick="prevCard()"
+                    title="Anterior"
+                    aria-label="Anterior"
+                    class="btn btn-secondary"
+                >
+                    <span class="btn-icon">←</span> Anterior
+                </button>
+                <button
+                    onclick="nextCard()"
+                    title="Próximo"
+                    aria-label="Próximo"
+                    class="btn btn-secondary"
+                >
+                    Próximo <span class="btn-icon">→</span>
+                </button>
+                <button
+                    onclick="flipCard()"
+                    id="flipBtn"
+                    title="Mostrar resposta"
+                    aria-label="Mostrar resposta"
+                    class="btn btn-primary"
+                >
+                    <span class="btn-icon">🔄</span> Mostrar resposta
+                </button>
+                <button
+                    onclick="toggleReverse()"
+                    title="Inverter frente/verso"
+                    aria-label="Inverter"
+                    class="btn btn-secondary"
+                >
+                    <span class="btn-icon">🔀</span> Inverter
+                </button>
+                <button
+                    onclick="shuffleCards()"
+                    title="Embaralhar"
+                    aria-label="Embaralhar"
+                    class="btn btn-secondary"
+                >
+                    <span class="btn-icon">🎲</span> Embaralhar
+                </button>
+            </div>
+
+            <!-- Seção de Explicação -->
+            <div class="explanation-section">
+                <button
+                    onclick="toggleExplanation()"
+                    id="explanationBtn"
+                    class="explanation-toggle btn btn-accent"
+                    title="Ver explicação detalhada"
+                >
+                    <span class="btn-icon">💡</span> Ver Explicação
+                </button>
+                <div class="explanation-content" id="explanationContent">
+                    <div class="explanation-text" id="explanationText">
+                        Clique em "Ver Explicação" para obter detalhes sobre
+                        este problema.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>
