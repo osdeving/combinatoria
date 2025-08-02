@@ -28,10 +28,18 @@ let appState = {
 
 // Inicialização
 document.addEventListener("DOMContentLoaded", function () {
-    loadFlashcards();
-    setupEventListeners();
-    setupResponsive();
-    updateUI();
+    // Aguarda um pouco mais para garantir que todos os scripts carregaram
+    setTimeout(() => {
+        loadFlashcards();
+        setupEventListeners();
+        setupResponsive();
+        updateUI();
+    }, 200);
+});
+
+// Também aguarda o carregamento completo da janela
+window.addEventListener("load", function() {
+    console.log("Window loaded, KaTeX disponível:", !!window.katex, !!window.renderMathInElement);
 });
 
 // Carregamento dos dados
@@ -925,8 +933,9 @@ function updateUI() {
 
 // Utilitário para renderização de matemática
 function renderMathInElement(element) {
-    // Aguarda o carregamento completo do KaTeX
-    const attemptRender = () => {
+    if (!element) return;
+    
+    const doRender = () => {
         if (window.katex && window.renderMathInElement) {
             try {
                 window.renderMathInElement(element, {
@@ -944,10 +953,48 @@ function renderMathInElement(element) {
                 console.warn("Erro ao renderizar matemática:", error);
             }
         } else {
-            // Tenta novamente após um breve delay
-            setTimeout(attemptRender, 100);
+            setTimeout(doRender, 50);
         }
     };
     
-    attemptRender();
+    doRender();
 }
+
+// Função de teste para debug
+function testMath() {
+    console.log("=== TESTE DIRETO DE MATEMÁTICA ===");
+    console.log("window.katex:", window.katex);
+    console.log("window.renderMathInElement:", window.renderMathInElement);
+    console.log("Tipo renderMathInElement:", typeof window.renderMathInElement);
+    
+    const questionEl = document.querySelector(".question");
+    if (questionEl) {
+        questionEl.innerHTML = "Teste: $x^2 + y^2 = z^2$ e $$\\int_0^1 x dx = \\frac{1}{2}$$";
+        console.log("Conteúdo inserido:", questionEl.innerHTML);
+        
+        // Tentar diferentes formas de acessar a função
+        let renderFunc = window.renderMathInElement || renderMathInElement;
+        
+        if (renderFunc && window.katex) {
+            console.log("Usando função de renderização:", renderFunc);
+            try {
+                renderFunc(questionEl, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false },
+                    ],
+                    throwOnError: false
+                });
+                console.log("Após renderização:", questionEl.innerHTML);
+            } catch (e) {
+                console.error("Erro na renderização:", e);
+            }
+        } else {
+            console.log("Função de renderização não encontrada!");
+            console.log("Todas as propriedades window:", Object.keys(window).filter(k => k.includes('render')));
+        }
+    }
+}
+
+// Adicionar ao escopo global para acesso via console
+window.testMath = testMath;

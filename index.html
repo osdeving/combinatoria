@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link
             rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+            href="lib/katex.min.css"
         />
         <link rel="stylesheet" href="style.css" />
     </head>
@@ -350,11 +350,19 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Scripts KaTeX -->
-        <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
-        
+        <script 
+            src="lib/katex.min.js"
+            onload="console.log('KaTeX carregado:', !!window.katex)"
+            onerror="console.error('Erro ao carregar KaTeX')"
+        ></script>
+        <script 
+            src="lib/auto-render.min.js"
+            onload="console.log('Auto-render carregado:', !!window.renderMathInElement)"
+            onerror="console.error('Erro ao carregar auto-render')"
+        ></script>
+
         <!-- Script da aplicação -->
         <script src="script.js"></script>
     </body>
