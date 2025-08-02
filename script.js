@@ -38,8 +38,12 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // Também aguarda o carregamento completo da janela
-window.addEventListener("load", function() {
-    console.log("Window loaded, KaTeX disponível:", !!window.katex, !!window.renderMathInElement);
+window.addEventListener("load", function () {
+    console.log(
+        "Window loaded, KaTeX disponível:",
+        !!window.katex,
+        !!window.renderMathInElement
+    );
 });
 
 // Carregamento dos dados
@@ -935,9 +939,15 @@ function updateUI() {
 function renderMathInElement(element) {
     if (!element) return;
     
+    console.log("Tentando renderizar matemática no elemento:", element);
+    console.log("Conteúdo do elemento:", element.innerHTML);
+    console.log("KaTeX disponível:", !!window.katex);
+    console.log("renderMathInElement disponível:", !!window.renderMathInElement);
+    
     const doRender = () => {
         if (window.katex && window.renderMathInElement) {
             try {
+                console.log("Iniciando renderização...");
                 window.renderMathInElement(element, {
                     delimiters: [
                         { left: "$$", right: "$$", display: true },
@@ -949,32 +959,36 @@ function renderMathInElement(element) {
                     errorColor: "#cc0000",
                     strict: false,
                 });
+                console.log("Renderização concluída. Novo conteúdo:", element.innerHTML);
             } catch (error) {
-                console.warn("Erro ao renderizar matemática:", error);
+                console.error("Erro ao renderizar matemática:", error);
             }
         } else {
+            console.log("KaTeX ainda não disponível, tentando novamente...");
             setTimeout(doRender, 50);
         }
     };
     
+    // Tentar imediatamente e também com delay
     doRender();
-}
-
-// Função de teste para debug
+    setTimeout(doRender, 200);
+    setTimeout(doRender, 500);
+}// Função de teste para debug
 function testMath() {
     console.log("=== TESTE DIRETO DE MATEMÁTICA ===");
     console.log("window.katex:", window.katex);
     console.log("window.renderMathInElement:", window.renderMathInElement);
     console.log("Tipo renderMathInElement:", typeof window.renderMathInElement);
-    
+
     const questionEl = document.querySelector(".question");
     if (questionEl) {
-        questionEl.innerHTML = "Teste: $x^2 + y^2 = z^2$ e $$\\int_0^1 x dx = \\frac{1}{2}$$";
+        questionEl.innerHTML =
+            "Teste: $x^2 + y^2 = z^2$ e $$\\int_0^1 x dx = \\frac{1}{2}$$";
         console.log("Conteúdo inserido:", questionEl.innerHTML);
-        
+
         // Tentar diferentes formas de acessar a função
         let renderFunc = window.renderMathInElement || renderMathInElement;
-        
+
         if (renderFunc && window.katex) {
             console.log("Usando função de renderização:", renderFunc);
             try {
@@ -983,7 +997,7 @@ function testMath() {
                         { left: "$$", right: "$$", display: true },
                         { left: "$", right: "$", display: false },
                     ],
-                    throwOnError: false
+                    throwOnError: false,
                 });
                 console.log("Após renderização:", questionEl.innerHTML);
             } catch (e) {
@@ -991,10 +1005,108 @@ function testMath() {
             }
         } else {
             console.log("Função de renderização não encontrada!");
-            console.log("Todas as propriedades window:", Object.keys(window).filter(k => k.includes('render')));
+            console.log(
+                "Todas as propriedades window:",
+                Object.keys(window).filter((k) => k.includes("render"))
+            );
         }
     }
 }
 
 // Adicionar ao escopo global para acesso via console
 window.testMath = testMath;
+
+// Funções de wrapper para compatibilidade com HTML
+function setCategory(category) {
+    setActiveCategory(category);
+}
+
+function setDifficulty(difficulty) {
+    if (difficulty === 'all') difficulty = 'todas';
+    setActiveDifficulty(difficulty);
+}
+
+function shuffleCards() {
+    showRandomCard();
+}
+
+function toggleReverse() {
+    // Implementar inversão de frente/verso se necessário
+    console.log("Função toggleReverse não implementada ainda");
+}
+
+function performSearch() {
+    const input = document.getElementById('searchInput');
+    if (input) {
+        handleSearch({ target: input });
+    }
+}
+
+function clearSearch() {
+    const input = document.getElementById('searchInput');
+    if (input) {
+        input.value = '';
+        appState.activeSearch = '';
+        applyFilters();
+        
+        const clearBtn = document.getElementById('searchClear');
+        if (clearBtn) {
+            clearBtn.style.display = 'none';
+        }
+    }
+}
+
+function toggleStatsPanel() {
+    const statsPanel = document.getElementById('statsPanel');
+    if (statsPanel) {
+        statsPanel.classList.toggle('open');
+        updateStatsPanel();
+    }
+}
+
+function resetStats() {
+    sessionStats = {
+        correct: 0,
+        incorrect: 0,
+        skipped: 0,
+        startTime: Date.now(),
+        studyTime: 0
+    };
+    updateStatsPanel();
+}
+
+function toggleSidebar() {
+    if (appState.isMobile) {
+        toggleMobileSidebar();
+    } else {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) {
+            sidebar.classList.toggle('collapsed');
+        }
+    }
+}
+
+// Função simplificada para forçar renderização
+function forceRenderMath() {
+    console.log("=== FORÇANDO RENDERIZAÇÃO ===");
+    if (window.renderMathInElement && window.katex) {
+        try {
+            window.renderMathInElement(document.body, {
+                delimiters: [
+                    { left: "$$", right: "$$", display: true },
+                    { left: "$", right: "$", display: false },
+                ],
+                throwOnError: false
+            });
+            console.log("Renderização forçada concluída");
+        } catch (e) {
+            console.error("Erro na renderização forçada:", e);
+        }
+    } else {
+        console.log("KaTeX não disponível para renderização forçada");
+    }
+}
+
+// Tornar as funções globais
+window.testMath = testMath;
+window.forceRenderMath = forceRenderMath;
