@@ -1,596 +1,905 @@
-let cardsData = {};
-let cards = [];
-let current = 0;
-let reverse = false;
-let flipped = false;
-let explanationVisible = false;
-let currentFilter = {
-    category: 'all',
-    difficulty: 'all',
-    tags: [],
-    search: ''
+// Dados e estado da aplicação
+let currentData = [];
+let allCards = [];
+let filteredCards = [];
+let currentCardIndex = 0;
+let studyMode = false;
+let isFlipped = false;
+
+// Estatísticas da sessão
+let sessionStats = {
+    correct: 0,
+    incorrect: 0,
+    skipped: 0,
+    startTime: Date.now(),
+    studyTime: 0
 };
 
-// Sistema de estatísticas
-let studyStats = {
-    cardsViewed: 0,
-    startTime: null,
-    currentStreak: 0,
-    categoryViews: {},
-    isStudyMode: false
+// Estado da aplicação
+let appState = {
+    activeCategory: 'todas',
+    activeDifficulty: 'todas',
+    activeSearch: '',
+    activeTags: new Set(),
+    showExplanation: false,
+    sidebarOpen: false,
+    isMobile: window.innerWidth <= 768
 };
 
-async function loadCards() {
+// Inicialização
+document.addEventListener('DOMContentLoaded', function() {
+    loadFlashcards();
+    setupEventListeners();
+    setupResponsive();
+    updateUI();
+});
+
+// Carregamento dos dados
+async function loadFlashcards() {
     try {
-        const res = await fetch("cards.json");
-        cardsData = await res.json();
-        cards = cardsData.cards || [];
-        current = 0;
-        applyFilters();
-        showCard();
+        const response = await fetch('cards.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        allCards = data.cards || [];
+        filteredCards = [...allCards];
+        currentData = [...allCards];
+        
+        console.log(`Carregadas ${allCards.length} cartas`);
+        
+        updateCounters();
+        updateProgressBar();
+        showRandomCard();
+        renderSidebarContent();
+        
     } catch (error) {
-        console.error("Erro ao carregar cards:", error);
-        // Fallback para um card de exemplo se houver erro
-        cardsData = {
-            metadata: { totalCards: 1 },
-            cards: [
-                {
-                    id: 1,
-                    type: "exemplo",
-                    category: "geral",
-                    difficulty: "basico",
-                    tags: ["erro"],
-                    q: "Erro ao carregar flashcards",
-                    a: "Verifique se o arquivo cards.json existe",
-                    explanation: "Certifique-se de que o arquivo JSON está na mesma pasta que o HTML.",
-                },
-            ]
-        };
-        cards = cardsData.cards;
-        current = 0;
-        showCard();
+        console.error('Erro ao carregar flashcards:', error);
+        document.querySelector('.flashcard').innerHTML = `
+            <div class="card-face card-front">
+                <div class="question">❌ Erro ao carregar dados: ${error.message}</div>
+            </div>
+        `;
+    }
+}
+
+// Configuração de event listeners
+function setupEventListeners() {
+    // Toggle da sidebar
+    const toggleBtn = document.querySelector('.sidebar-toggle');
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', toggleSidebar);
+    }
+    
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', toggleMobileSidebar);
+    }
+    
+    if (overlay) {
+        overlay.addEventListener('click', closeMobileSidebar);
+    }
+    
+    // Botões de navegação da sidebar
+    setupSidebarNavigation();
+    
+    // Busca na sidebar
+    const searchInput = document.querySelector('.sidebar-search');
+    const searchClear = document.querySelector('.search-clear');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', handleSearch);
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSearch(e);
+            }
+        });
+    }
+    
+    if (searchClear) {
+        searchClear.addEventListener('click', clearSearch);
+    }
+    
+    // Controles principais
+    const flashcard = document.querySelector('.flashcard');
+    if (flashcard) {
+        flashcard.addEventListener('click', flipCard);
+    }
+    
+    // Botões de controle
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const randomBtn = document.getElementById('randomBtn');
+    const studyBtn = document.getElementById('studyBtn');
+    const explanationBtn = document.getElementById('explanationBtn');
+    const statsBtn = document.getElementById('statsBtn');
+    
+    if (nextBtn) nextBtn.addEventListener('click', nextCard);
+    if (prevBtn) prevBtn.addEventListener('click', previousCard);
+    if (randomBtn) randomBtn.addEventListener('click', showRandomCard);
+    if (studyBtn) studyBtn.addEventListener('click', toggleStudyMode);
+    if (explanationBtn) explanationBtn.addEventListener('click', toggleExplanation);
+    if (statsBtn) statsBtn.addEventListener('click', toggleStatsPanel);
+    
+    // Botões do modo estudo
+    const correctBtn = document.getElementById('correctBtn');
+    const incorrectBtn = document.getElementById('incorrectBtn');
+    const skipBtn = document.getElementById('skipBtn');
+    
+    if (correctBtn) correctBtn.addEventListener('click', () => answerCard('correct'));
+    if (incorrectBtn) incorrectBtn.addEventListener('click', () => answerCard('incorrect'));
+    if (skipBtn) skipBtn.addEventListener('click', () => answerCard('skipped'));
+    
+    // Fechar painel de estatísticas
+    const statsClose = document.querySelector('.stats-close');
+    if (statsClose) {
+        statsClose.addEventListener('click', toggleStatsPanel);
+    }
+    
+    // Teclado
+    document.addEventListener('keydown', handleKeyboard);
+    
+    // Resize
+    window.addEventListener('resize', handleResize);
+}
+
+// Configuração da navegação da sidebar
+function setupSidebarNavigation() {
+    // Categorias
+    const categoryBtns = document.querySelectorAll('[data-category]');
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const category = btn.getAttribute('data-category');
+            setActiveCategory(category);
+        });
+    });
+    
+    // Dificuldades
+    const difficultyBtns = document.querySelectorAll('[data-difficulty]');
+    difficultyBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const difficulty = btn.getAttribute('data-difficulty');
+            setActiveDifficulty(difficulty);
+        });
+    });
+    
+    // Tags
+    const tagBtns = document.querySelectorAll('[data-tag]');
+    tagBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const tag = btn.getAttribute('data-tag');
+            toggleTag(tag);
+        });
+    });
+    
+    // Botões de ação
+    const actionBtns = document.querySelectorAll('[data-action]');
+    actionBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const action = btn.getAttribute('data-action');
+            handleAction(action);
+        });
+    });
+}
+
+// Gerenciamento da sidebar
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.toggle('collapsed');
+    
+    const icon = document.querySelector('.sidebar-toggle');
+    if (sidebar.classList.contains('collapsed')) {
+        icon.textContent = '→';
+    } else {
+        icon.textContent = '←';
+    }
+}
+
+function toggleMobileSidebar() {
+    appState.sidebarOpen = !appState.sidebarOpen;
+    updateSidebarState();
+}
+
+function closeMobileSidebar() {
+    appState.sidebarOpen = false;
+    updateSidebarState();
+}
+
+function updateSidebarState() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    if (appState.isMobile) {
+        if (appState.sidebarOpen) {
+            sidebar.classList.add('open');
+            overlay.classList.add('show');
+        } else {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+        }
+    }
+}
+
+// Filtros e busca
+function setActiveCategory(category) {
+    appState.activeCategory = category;
+    applyFilters();
+    updateSidebarActiveStates();
+    if (appState.isMobile) {
+        closeMobileSidebar();
+    }
+}
+
+function setActiveDifficulty(difficulty) {
+    appState.activeDifficulty = difficulty;
+    applyFilters();
+    updateSidebarActiveStates();
+    if (appState.isMobile) {
+        closeMobileSidebar();
+    }
+}
+
+function toggleTag(tag) {
+    if (appState.activeTags.has(tag)) {
+        appState.activeTags.delete(tag);
+    } else {
+        appState.activeTags.add(tag);
+    }
+    applyFilters();
+    updateSidebarActiveStates();
+}
+
+function handleSearch(e) {
+    appState.activeSearch = e.target.value.toLowerCase().trim();
+    applyFilters();
+    
+    const clearBtn = document.querySelector('.search-clear');
+    if (clearBtn) {
+        clearBtn.style.display = appState.activeSearch ? 'block' : 'none';
+    }
+}
+
+function clearSearch() {
+    const input = document.querySelector('.sidebar-search');
+    if (input) {
+        input.value = '';
+        appState.activeSearch = '';
+        applyFilters();
+        
+        const clearBtn = document.querySelector('.search-clear');
+        if (clearBtn) {
+            clearBtn.style.display = 'none';
+        }
     }
 }
 
 function applyFilters() {
-    let filteredCards = cardsData.cards || [];
+    let filtered = [...allCards];
     
-    // Filtrar por categoria
-    if (currentFilter.category !== 'all') {
-        filteredCards = filteredCards.filter(card => card.category === currentFilter.category);
+    // Filtro por categoria
+    if (appState.activeCategory !== 'todas') {
+        filtered = filtered.filter(card => card.category === appState.activeCategory);
     }
     
-    // Filtrar por dificuldade
-    if (currentFilter.difficulty !== 'all') {
-        filteredCards = filteredCards.filter(card => card.difficulty === currentFilter.difficulty);
+    // Filtro por dificuldade
+    if (appState.activeDifficulty !== 'todas') {
+        filtered = filtered.filter(card => card.difficulty === appState.activeDifficulty);
     }
     
-    // Filtrar por tags
-    if (currentFilter.tags.length > 0) {
-        filteredCards = filteredCards.filter(card => 
-            currentFilter.tags.some(tag => card.tags && card.tags.includes(tag))
-        );
-    }
-    
-    // Filtrar por busca de texto
-    if (currentFilter.search.trim() !== '') {
-        const searchTerm = currentFilter.search.toLowerCase().trim();
-        filteredCards = filteredCards.filter(card => {
-            const searchableText = (
-                (card.q || '') + ' ' + 
-                (card.a || '') + ' ' + 
-                (card.explanation || '')
-            ).toLowerCase();
-            return searchableText.includes(searchTerm);
+    // Filtro por tags
+    if (appState.activeTags.size > 0) {
+        filtered = filtered.filter(card => {
+            if (!card.tags || !Array.isArray(card.tags)) return false;
+            return Array.from(appState.activeTags).every(tag => 
+                card.tags.includes(tag)
+            );
         });
     }
     
-    cards = filteredCards;
-    current = Math.min(current, cards.length - 1);
-    if (current < 0) current = 0;
+    // Filtro por busca
+    if (appState.activeSearch) {
+        filtered = filtered.filter(card => {
+            const searchIn = [
+                card.question,
+                card.answer,
+                card.explanation || '',
+                ...(card.tags || [])
+            ].join(' ').toLowerCase();
+            
+            return searchIn.includes(appState.activeSearch);
+        });
+    }
+    
+    filteredCards = filtered;
+    currentData = filtered;
+    currentCardIndex = 0;
+    
+    updateCounters();
+    updateProgressBar();
+    
+    if (filteredCards.length > 0) {
+        showCard(currentCardIndex);
+    } else {
+        showNoCardsMessage();
+    }
 }
 
-function renderMathInCard() {
-    renderMathInElement(document.getElementById("flashcard"), {
-        delimiters: [
-            { left: "$$", right: "$$", display: true },
-            { left: "$", right: "$", display: false },
-        ],
+// Atualização dos estados ativos na sidebar
+function updateSidebarActiveStates() {
+    // Categorias
+    document.querySelectorAll('[data-category]').forEach(btn => {
+        const category = btn.getAttribute('data-category');
+        btn.classList.toggle('active', category === appState.activeCategory);
     });
+    
+    // Dificuldades
+    document.querySelectorAll('[data-difficulty]').forEach(btn => {
+        const difficulty = btn.getAttribute('data-difficulty');
+        btn.classList.toggle('active', difficulty === appState.activeDifficulty);
+    });
+    
+    // Tags
+    document.querySelectorAll('[data-tag]').forEach(btn => {
+        const tag = btn.getAttribute('data-tag');
+        btn.classList.toggle('active', appState.activeTags.has(tag));
+    });
+}
 
-    // Também render math na explicação se estiver visível
-    if (explanationVisible) {
-        renderMathInElement(document.getElementById("explanationText"), {
-            delimiters: [
-                { left: "$$", right: "$$", display: true },
-                { left: "$", right: "$", display: false },
-            ],
-        });
+// Gerenciamento de ações
+function handleAction(action) {
+    switch(action) {
+        case 'clear-filters':
+            appState.activeCategory = 'todas';
+            appState.activeDifficulty = 'todas';
+            appState.activeTags.clear();
+            appState.activeSearch = '';
+            
+            const searchInput = document.querySelector('.sidebar-search');
+            if (searchInput) searchInput.value = '';
+            
+            applyFilters();
+            updateSidebarActiveStates();
+            break;
+            
+        case 'random-card':
+            showRandomCard();
+            if (appState.isMobile) closeMobileSidebar();
+            break;
+            
+        case 'study-mode':
+            toggleStudyMode();
+            if (appState.isMobile) closeMobileSidebar();
+            break;
     }
 }
 
-function showCard() {
-    if (!cards.length) {
-        document.getElementById("question").innerHTML = "Nenhum card encontrado para os filtros selecionados";
-        document.getElementById("answer").innerHTML = "Tente alterar os filtros";
-        updateProgressDisplay(0, 0);
+// Navegação de cartas
+function showCard(index) {
+    if (!currentData || currentData.length === 0) {
+        showNoCardsMessage();
         return;
     }
     
-    const card = cards[current];
-    const front = reverse ? card.a || "Sem resposta" : card.q;
-    const back = reverse ? card.q : card.a || "Sem resposta";
-
-    document.getElementById("question").innerHTML = front || "Carregando...";
-    document.getElementById("answer").innerHTML = back || "Sem resposta";
+    if (index < 0) index = currentData.length - 1;
+    if (index >= currentData.length) index = 0;
     
-    // Atualizar progresso
-    updateProgressDisplay(current + 1, cards.length);
-
-    // Registrar visualização para estatísticas
-    if (studyStats.isStudyMode) {
-        recordCardView(card);
+    currentCardIndex = index;
+    const card = currentData[currentCardIndex];
+    
+    if (!card) {
+        console.error('Carta não encontrada no índice:', index);
+        return;
     }
-
-    // Atualizar explicação
-    updateExplanation();
-    updateCategoryCounts();
-
-    flipped = false;
-    document.getElementById("flashcard").classList.remove("flipped");
-
-    // Delay para garantir que o DOM foi atualizado antes de renderizar o KaTeX
-    setTimeout(() => renderMathInCard(), 50);
+    
+    const flashcard = document.querySelector('.flashcard');
+    const flashcardInner = document.querySelector('.flashcard-inner');
+    const questionEl = document.querySelector('.question');
+    const answerEl = document.querySelector('.answer');
+    
+    if (!flashcard || !questionEl || !answerEl) {
+        console.error('Elementos do flashcard não encontrados');
+        return;
+    }
+    
+    // Reset flip state
+    isFlipped = false;
+    flashcard.classList.remove('flipped');
+    
+    // Update content
+    questionEl.innerHTML = card.question || 'Pergunta não disponível';
+    answerEl.innerHTML = card.answer || 'Resposta não disponível';
+    
+    // Render math
+    renderMathInElement(questionEl);
+    renderMathInElement(answerEl);
+    
+    // Update category color
+    const cardFront = document.querySelector('.card-front');
+    const cardBack = document.querySelector('.card-back');
+    
+    if (cardFront) {
+        cardFront.style.borderColor = getCategoryColor(card.category);
+    }
+    
+    updateCardInfo(card);
+    updateExplanation(card);
+    updateProgressBar();
 }
 
-function updateProgressDisplay(current, total) {
-    // Atualizar texto do progresso
-    const progressElement = document.getElementById("progress");
-    if (progressElement) {
-        progressElement.textContent = `Card ${current} de ${total}`;
-    }
-    
-    // Atualizar barra de progresso
-    const progressFill = document.getElementById("progressFill");
-    const progressPercentage = document.getElementById("progressPercentage");
-    
-    if (total > 0) {
-        const percentage = Math.round((current / total) * 100);
-        if (progressFill) progressFill.style.width = `${percentage}%`;
-        if (progressPercentage) progressPercentage.textContent = `${percentage}%`;
-    } else {
-        if (progressFill) progressFill.style.width = '0%';
-        if (progressPercentage) progressPercentage.textContent = '0%';
-    }
-    
-    // Atualizar estatísticas
-    updateStatsDisplay();
+function nextCard() {
+    if (currentData.length === 0) return;
+    currentCardIndex = (currentCardIndex + 1) % currentData.length;
+    showCard(currentCardIndex);
 }
 
-function updateStatsDisplay() {
-    const currentCategoryElement = document.getElementById("currentCategory");
-    const currentDifficultyElement = document.getElementById("currentDifficulty");
-    
-    if (currentCategoryElement) {
-        const categoryName = currentFilter.category === 'all' ? 'Todas' : 
-            currentFilter.category.charAt(0).toUpperCase() + currentFilter.category.slice(1);
-        currentCategoryElement.textContent = categoryName;
-    }
-    
-    if (currentDifficultyElement) {
-        const difficultyName = currentFilter.difficulty === 'all' ? 'Todas' : 
-            currentFilter.difficulty.charAt(0).toUpperCase() + currentFilter.difficulty.slice(1);
-        currentDifficultyElement.textContent = difficultyName;
-    }
+function previousCard() {
+    if (currentData.length === 0) return;
+    currentCardIndex = currentCardIndex > 0 ? currentCardIndex - 1 : currentData.length - 1;
+    showCard(currentCardIndex);
 }
 
-function updateExplanation() {
-    const card = cards[current];
-    const explanationText = document.getElementById("explanationText");
-    const explanationBtn = document.getElementById("explanationBtn");
-
-    if (card && card.explanation) {
-        explanationText.innerHTML = card.explanation;
-        explanationBtn.style.display = "block";
-        explanationBtn.disabled = false;
-    } else {
-        explanationText.innerHTML =
-            "Nenhuma explicação disponível para este card.";
-        explanationBtn.style.display = "block";
-        explanationBtn.disabled = false;
-    }
-}
-
-function toggleExplanation() {
-    const explanationContent = document.getElementById("explanationContent");
-    const explanationBtn = document.getElementById("explanationBtn");
-
-    explanationVisible = !explanationVisible;
-
-    if (explanationVisible) {
-        explanationContent.classList.add("show");
-        explanationBtn.innerHTML =
-            '<span class="btn-icon">❌</span> Ocultar Explicação';
-        setTimeout(() => renderMathInCard(), 100); // Re-render math para incluir a explicação
-    } else {
-        explanationContent.classList.remove("show");
-        explanationBtn.innerHTML =
-            '<span class="btn-icon">💡</span> Ver Explicação';
-    }
+function showRandomCard() {
+    if (currentData.length === 0) return;
+    currentCardIndex = Math.floor(Math.random() * currentData.length);
+    showCard(currentCardIndex);
 }
 
 function flipCard() {
-    flipped = !flipped;
-    document.getElementById("flashcard").classList.toggle("flipped", flipped);
-    // Funções de filtro
-function setCategory(category) {
-    currentFilter.category = category;
-    updateCategoryButtons();
-    applyFilters();
-    current = 0;
-    showCard();
-    updateStatsDisplay();
+    const flashcard = document.querySelector('.flashcard');
+    isFlipped = !isFlipped;
+    flashcard.classList.toggle('flipped', isFlipped);
 }
 
-function setDifficulty(difficulty) {
-    currentFilter.difficulty = difficulty;
-    updateDifficultyButtons();
-    applyFilters();
-    current = 0;
-    showCard();
-    updateStatsDisplay();
-}
-
-function updateCategoryButtons() {
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.dataset.category === currentFilter.category) {
-            btn.classList.add('active');
-        }
-    });
-}
-
-function updateDifficultyButtons() {
-    document.querySelectorAll('.difficulty-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.dataset.difficulty === currentFilter.difficulty) {
-            btn.classList.add('active');
-        }
-    });
-}
-
-function updateCategoryCounts() {
-    if (!cardsData.metadata) return;
+// Modo estudo
+function toggleStudyMode() {
+    studyMode = !studyMode;
+    updateStudyModeUI();
     
-    // Atualizar contador total
-    const totalCount = currentFilter.difficulty === 'all' 
-        ? cardsData.metadata.totalCards 
-        : cardsData.cards.filter(card => card.difficulty === currentFilter.difficulty).length;
-    
-    const countAll = document.getElementById('count-all');
-    if (countAll) countAll.textContent = totalCount;
-    
-    // Atualizar contadores por categoria
-    Object.keys(cardsData.metadata.categories || {}).forEach(category => {
-        let count = cardsData.cards.filter(card => card.category === category);
-        if (currentFilter.difficulty !== 'all') {
-            count = count.filter(card => card.difficulty === currentFilter.difficulty);
-        }
-        
-        const countElement = document.getElementById(`count-${category}`);
-        if (countElement) {
-            countElement.textContent = count.length;
-        }
-    });
+    if (studyMode) {
+        sessionStats = {
+            correct: 0,
+            incorrect: 0,
+            skipped: 0,
+            startTime: Date.now(),
+            studyTime: 0
+        };
+    }
 }
 
-    renderMathInCard();
-}
-
-// Funções de busca
-function performSearch() {
-    const searchInput = document.getElementById('searchInput');
-    const searchClear = document.getElementById('searchClear');
+function updateStudyModeUI() {
+    const studyControls = document.querySelector('.study-controls');
+    const normalControls = document.querySelector('.normal-controls');
+    const studyBtn = document.getElementById('studyBtn');
     
-    currentFilter.search = searchInput.value;
-    
-    // Mostrar/esconder botão de limpar
-    if (currentFilter.search.trim()) {
-        searchClear.style.display = 'block';
-    } else {
-        searchClear.style.display = 'none';
+    if (studyControls) {
+        studyControls.style.display = studyMode ? 'flex' : 'none';
     }
     
-    applyFilters();
-    current = 0;
-    showCard();
-}
-
-function clearSearch() {
-    const searchInput = document.getElementById('searchInput');
-    const searchClear = document.getElementById('searchClear');
-    
-    searchInput.value = '';
-    currentFilter.search = '';
-    searchClear.style.display = 'none';
-    
-    applyFilters();
-    current = 0; 
-    showCard();
-}
-
-// Funções de tags
-function toggleTag(tag) {
-    const tagIndex = currentFilter.tags.indexOf(tag);
-    
-    if (tagIndex === -1) {
-        currentFilter.tags.push(tag);
-    } else {
-        currentFilter.tags.splice(tagIndex, 1);
+    if (normalControls) {
+        normalControls.style.display = studyMode ? 'none' : 'flex';
     }
     
-    updateTagButtons();
-    applyFilters();
-    current = 0;
-    showCard();
+    if (studyBtn) {
+        studyBtn.classList.toggle('active', studyMode);
+        studyBtn.innerHTML = studyMode 
+            ? '<span class="btn-icon">⏹️</span> Parar Estudo'
+            : '<span class="btn-icon">📚</span> Modo Estudo';
+    }
+    
+    // Atualizar botão na sidebar
+    const sidebarStudyBtn = document.querySelector('[data-action="study-mode"]');
+    if (sidebarStudyBtn) {
+        sidebarStudyBtn.classList.toggle('active', studyMode);
+    }
 }
 
-function updateTagButtons() {
-    document.querySelectorAll('.tag-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (currentFilter.tags.includes(btn.dataset.tag)) {
-            btn.classList.add('active');
+function answerCard(result) {
+    sessionStats[result]++;
+    sessionStats.studyTime = Date.now() - sessionStats.startTime;
+    
+    // Feedback visual
+    showAnswerFeedback(result);
+    
+    // Próxima carta
+    setTimeout(() => {
+        nextCard();
+    }, 1000);
+}
+
+function showAnswerFeedback(result) {
+    const flashcard = document.querySelector('.flashcard');
+    const currentClass = flashcard.className;
+    
+    flashcard.classList.add(`feedback-${result}`);
+    
+    setTimeout(() => {
+        flashcard.className = currentClass;
+    }, 1000);
+}
+
+// Explicações
+function toggleExplanation() {
+    appState.showExplanation = !appState.showExplanation;
+    const explanationContent = document.querySelector('.explanation-content');
+    const explanationBtn = document.getElementById('explanationBtn');
+    
+    if (explanationContent) {
+        explanationContent.classList.toggle('show', appState.showExplanation);
+    }
+    
+    if (explanationBtn) {
+        explanationBtn.classList.toggle('active', appState.showExplanation);
+        const icon = explanationBtn.querySelector('.btn-icon');
+        if (icon) {
+            icon.textContent = appState.showExplanation ? '📖' : '💡';
         }
+    }
+}
+
+function updateExplanation(card) {
+    const explanationText = document.querySelector('.explanation-text');
+    const explanationBtn = document.getElementById('explanationBtn');
+    
+    if (!explanationText || !explanationBtn) return;
+    
+    if (card.explanation && card.explanation.trim()) {
+        explanationBtn.style.display = 'inline-flex';
+        explanationText.innerHTML = card.explanation;
+        renderMathInElement(explanationText);
+    } else {
+        explanationBtn.style.display = 'none';
+        appState.showExplanation = false;
+        const explanationContent = document.querySelector('.explanation-content');
+        if (explanationContent) {
+            explanationContent.classList.remove('show');
+        }
+    }
+}
+
+// Estatísticas
+function toggleStatsPanel() {
+    const statsPanel = document.querySelector('.stats-panel');
+    if (statsPanel) {
+        statsPanel.classList.toggle('open');
+        updateStatsPanel();
+    }
+}
+
+function updateStatsPanel() {
+    updateGeneralStats();
+    updateCategoryStats();
+    updateSessionStats();
+}
+
+function updateGeneralStats() {
+    const totalCards = allCards.length;
+    const filteredCount = filteredCards.length;
+    const categoriesCount = new Set(allCards.map(card => card.category)).size;
+    const progress = filteredCount > 0 ? Math.round(((currentCardIndex + 1) / filteredCount) * 100) : 0;
+    
+    const statElements = {
+        'total-cards': totalCards,
+        'filtered-cards': filteredCount,
+        'categories-count': categoriesCount,
+        'current-progress': `${progress}%`
+    };
+    
+    Object.entries(statElements).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
     });
 }
 
-function loadPopularTags() {
-    if (!cardsData.cards) return;
+function updateCategoryStats() {
+    const categoryStats = {};
+    allCards.forEach(card => {
+        const category = card.category || 'Sem categoria';
+        categoryStats[category] = (categoryStats[category] || 0) + 1;
+    });
     
-    // Contar ocorrências de cada tag
+    const container = document.querySelector('.category-stats');
+    if (!container) return;
+    
+    container.innerHTML = Object.entries(categoryStats)
+        .sort((a, b) => b[1] - a[1])
+        .map(([category, count]) => `
+            <div class="category-stat-item">
+                <div class="category-stat-name">
+                    <span style="color: ${getCategoryColor(category)}">●</span>
+                    ${category}
+                </div>
+                <div class="category-stat-value">${count}</div>
+            </div>
+        `).join('');
+}
+
+function updateSessionStats() {
+    if (!studyMode) return;
+    
+    const total = sessionStats.correct + sessionStats.incorrect + sessionStats.skipped;
+    const accuracy = total > 0 ? Math.round((sessionStats.correct / total) * 100) : 0;
+    const timeSpent = Math.round((Date.now() - sessionStats.startTime) / 1000 / 60);
+    
+    const sessionElements = {
+        'session-correct': sessionStats.correct,
+        'session-incorrect': sessionStats.incorrect,
+        'session-skipped': sessionStats.skipped,
+        'session-accuracy': `${accuracy}%`,
+        'session-time': `${timeSpent} min`
+    };
+    
+    Object.entries(sessionElements).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+    });
+}
+
+// Utilitários
+function updateCounters() {
+    // Atualizar contadores na sidebar
+    const categoryCounters = {
+        'todas': allCards.length,
+        'permutacao': allCards.filter(c => c.category === 'permutacao').length,
+        'arranjo': allCards.filter(c => c.category === 'arranjo').length,
+        'combinacao': allCards.filter(c => c.category === 'combinacao').length,
+        'principios': allCards.filter(c => c.category === 'principios').length
+    };
+    
+    const difficultyCounters = {
+        'todas': allCards.length,
+        'facil': allCards.filter(c => c.difficulty === 'facil').length,
+        'medio': allCards.filter(c => c.difficulty === 'medio').length,
+        'dificil': allCards.filter(c => c.difficulty === 'dificil').length
+    };
+    
+    // Atualizar elementos na sidebar
+    Object.entries(categoryCounters).forEach(([category, count]) => {
+        const counter = document.querySelector(`[data-category="${category}"] .nav-count`);
+        if (counter) counter.textContent = count;
+    });
+    
+    Object.entries(difficultyCounters).forEach(([difficulty, count]) => {
+        const counter = document.querySelector(`[data-difficulty="${difficulty}"] .nav-count`);
+        if (counter) counter.textContent = count;
+    });
+    
+    // Atualizar contadores de tags
     const tagCounts = {};
-    cardsData.cards.forEach(card => {
-        if (card.tags) {
+    allCards.forEach(card => {
+        if (card.tags && Array.isArray(card.tags)) {
             card.tags.forEach(tag => {
                 tagCounts[tag] = (tagCounts[tag] || 0) + 1;
             });
         }
     });
     
-    // Ordenar tags por popularidade e pegar as top 10
-    const popularTags = Object.entries(tagCounts)
-        .sort(([,a], [,b]) => b - a)
-        .slice(0, 10);
+    Object.entries(tagCounts).forEach(([tag, count]) => {
+        const counter = document.querySelector(`[data-tag="${tag}"] .tag-count`);
+        if (counter) counter.textContent = count;
+    });
+}
+
+function updateProgressBar() {
+    const progressFill = document.querySelector('.progress-fill');
+    const progressText = document.querySelector('.progress-text');
+    const progressPercentage = document.querySelector('.progress-percentage');
     
-    // Renderizar tags
-    const tagsContainer = document.getElementById('tagsContainer');
-    if (tagsContainer) {
-        tagsContainer.innerHTML = popularTags.map(([tag, count]) => `
-            <button class="tag-btn" data-tag="${tag}" onclick="toggleTag('${tag}')">
-                <span>${tag.replace(/-/g, ' ')}</span>
-                <span class="tag-count">${count}</span>
-            </button>
-        `).join('');
-    }
-}
-
-// Sistema de Estatísticas
-function toggleStudyMode() {
-    studyStats.isStudyMode = !studyStats.isStudyMode;
-    const studyBtn = document.getElementById('studyModeBtn');
-    
-    if (studyStats.isStudyMode) {
-        // Iniciar modo de estudo
-        studyStats.startTime = Date.now();
-        studyStats.cardsViewed = 0;
-        studyStats.currentStreak = 0;
-        studyStats.categoryViews = {};
-        
-        studyBtn.innerHTML = '<span class="btn-icon">⏸️</span> Parar Estudo';
-        studyBtn.classList.add('active');
-        
-        // Mostrar painel de estatísticas
-        toggleStatsPanel(true);
-        
-        // Iniciar timer
-        startStudyTimer();
-    } else {
-        // Parar modo de estudo
-        studyBtn.innerHTML = '<span class="btn-icon">🎯</span> Modo Estudo';
-        studyBtn.classList.remove('active');
-        
-        stopStudyTimer();
-    }
-}
-
-function toggleStatsPanel(forceOpen = false) {
-    const statsPanel = document.getElementById('statsPanel');
-    const isOpen = statsPanel.classList.contains('open');
-    
-    if (forceOpen || !isOpen) {
-        statsPanel.classList.add('open');
-        updateStatsDisplay();
-        
-        // Criar overlay para mobile
-        if (window.innerWidth <= 768) {
-            createStatsOverlay();
-        }
-    } else {
-        statsPanel.classList.remove('open');
-        removeStatsOverlay();
-    }
-}
-
-function createStatsOverlay() {
-    if (document.getElementById('statsOverlay')) return;
-    
-    const overlay = document.createElement('div');
-    overlay.id = 'statsOverlay';
-    overlay.className = 'stats-overlay show';
-    overlay.onclick = () => toggleStatsPanel();
-    document.body.appendChild(overlay);
-}
-
-function removeStatsOverlay() {
-    const overlay = document.getElementById('statsOverlay');
-    if (overlay) {
-        overlay.remove();
-    }
-}
-
-function recordCardView(card) {
-    studyStats.cardsViewed++;
-    studyStats.currentStreak++;
-    
-    // Registrar por categoria
-    const category = card.category || 'outros';
-    studyStats.categoryViews[category] = (studyStats.categoryViews[category] || 0) + 1;
-    
-    updateStatsDisplay();
-}
-
-function updateStatsDisplay() {
-    // Atualizar cards visualizados
-    const totalCardsViewed = document.getElementById('totalCardsViewed');
-    if (totalCardsViewed) {
-        totalCardsViewed.textContent = studyStats.cardsViewed;
-    }
-    
-    // Atualizar sequência atual
-    const currentStreak = document.getElementById('currentStreak');
-    if (currentStreak) {
-        currentStreak.textContent = studyStats.currentStreak;
-    }
-    
-    // Atualizar estatísticas por categoria
-    updateCategoryStatsDisplay();
-}
-
-function updateCategoryStatsDisplay() {
-    const categoryStatsContainer = document.getElementById('categoryStats');
-    if (!categoryStatsContainer) return;
-    
-    const categoryMeta = cardsData.metadata?.categories || {};
-    
-    const statsHTML = Object.entries(studyStats.categoryViews)
-        .sort(([,a], [,b]) => b - a)
-        .map(([category, count]) => {
-            const meta = categoryMeta[category];
-            const icon = meta?.icon || '📚';
-            const name = meta?.name || category;
-            
-            return `
-                <div class="category-stat-item">
-                    <div class="category-stat-name">
-                        <span>${icon}</span>
-                        <span>${name}</span>
-                    </div>
-                    <div class="category-stat-value">${count}</div>
-                </div>
-            `;
-        }).join('');
-    
-    categoryStatsContainer.innerHTML = statsHTML || '<p style="text-align: center; color: var(--text-secondary);">Nenhum card visualizado ainda</p>';
-}
-
-let studyTimer;
-function startStudyTimer() {
-    studyTimer = setInterval(() => {
-        if (studyStats.startTime) {
-            const elapsed = Date.now() - studyStats.startTime;
-            const minutes = Math.floor(elapsed / 60000);
-            const seconds = Math.floor((elapsed % 60000) / 1000);
-            
-            const studyTimeElement = document.getElementById('studyTime');
-            if (studyTimeElement) {
-                studyTimeElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            }
-        }
-    }, 1000);
-}
-
-function stopStudyTimer() {
-    if (studyTimer) {
-        clearInterval(studyTimer);
-        studyTimer = null;
-    }
-}
-
-function resetStats() {
-    studyStats.cardsViewed = 0;
-    studyStats.currentStreak = 0;
-    studyStats.categoryViews = {};
-    studyStats.startTime = studyStats.isStudyMode ? Date.now() : null;
-    
-    updateStatsDisplay();
-}
-
-// Função para toggle da busca mobile
-function toggleMobileSearch() {
-    const searchSection = document.getElementById('searchSection');
-    const toggleBtn = document.getElementById('mobileSearchToggle');
-    
-    if (searchSection.classList.contains('mobile-visible')) {
-        searchSection.classList.remove('mobile-visible');
-        toggleBtn.innerHTML = '<span class="btn-icon">🔍</span> Buscar';
-    } else {
-        searchSection.classList.add('mobile-visible');
-        toggleBtn.innerHTML = '<span class="btn-icon">✕</span> Fechar';
-    }
-}function nextCard() {
-    current = (current + 1) % cards.length;
-    showCard();
-}
-
-function prevCard() {
-    current = (current - 1 + cards.length) % cards.length;
-    showCard();
-}
-
-function toggleReverse() {
-    reverse = !reverse;
-    showCard();
-}
-
-function shuffleCards() {
-    for (let i = cards.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [cards[i], cards[j]] = [cards[j], cards[i]];
-    }
-    current = 0;
-    showCard();
-}
-
-// Acessibilidade: teclas
-window.addEventListener("keydown", (e) => {
-    if (
-        document.activeElement !== document.body &&
-        document.activeElement !== document.getElementById("flashcard")
-    )
+    if (filteredCards.length === 0) {
+        if (progressFill) progressFill.style.width = '0%';
+        if (progressText) progressText.textContent = 'Nenhuma carta encontrada';
+        if (progressPercentage) progressPercentage.textContent = '0%';
         return;
-    if (e.key === "ArrowRight") nextCard();
-    else if (e.key === "ArrowLeft") prevCard();
-    else if (e.key === " " || e.key === "Enter") flipCard();
-});
+    }
+    
+    const progress = Math.round(((currentCardIndex + 1) / filteredCards.length) * 100);
+    
+    if (progressFill) {
+        progressFill.style.width = `${progress}%`;
+    }
+    
+    if (progressText) {
+        progressText.textContent = `Carta ${currentCardIndex + 1} de ${filteredCards.length}`;
+    }
+    
+    if (progressPercentage) {
+        progressPercentage.textContent = `${progress}%`;
+    }
+}
 
-// Event listeners
-document.addEventListener("DOMContentLoaded", function () {
-    const flashcard = document.getElementById("flashcard");
-    const flipBtn = document.getElementById("flipBtn");
+function updateCardInfo(card) {
+    // Atualizar informações do card atual se necessário
+    const cardElement = document.querySelector('.flashcard');
+    if (cardElement) {
+        cardElement.setAttribute('data-category', card.category);
+        cardElement.setAttribute('data-difficulty', card.difficulty);
+    }
+}
 
-    if (flashcard) flashcard.onclick = flipCard;
-    if (flipBtn) flipBtn.onclick = flipCard;
+function getCategoryColor(category) {
+    const colors = {
+        'permutacao': 'var(--permutacao-color)',
+        'arranjo': 'var(--arranjo-color)',
+        'combinacao': 'var(--combinacao-color)',
+        'principios': 'var(--principios-color)'
+    };
+    return colors[category] || 'var(--primary-color)';
+}
 
-    loadCards();
-});
+function showNoCardsMessage() {
+    const flashcard = document.querySelector('.flashcard');
+    if (flashcard) {
+        flashcard.innerHTML = `
+            <div class="flashcard-inner">
+                <div class="card-face card-front">
+                    <div class="question">
+                        <div style="text-align: center; color: var(--text-secondary);">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+                            <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">Nenhuma carta encontrada</div>
+                            <div style="font-size: 1rem;">Tente ajustar os filtros ou limpar a busca</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
 
-window.onload = function() {
-    loadCards();
-    // Inicializar interface após carregamento
-    setTimeout(() => {
-        updateCategoryButtons();
-        updateDifficultyButtons();
-        updateCategoryCounts();
-        loadPopularTags();
-    }, 100);
-};
+// Renderização de conteúdo da sidebar
+function renderSidebarContent() {
+    renderTagsInSidebar();
+}
+
+function renderTagsInSidebar() {
+    const tagsContainer = document.querySelector('.tags-grid');
+    if (!tagsContainer) return;
+    
+    const allTags = new Set();
+    const tagCounts = {};
+    
+    allCards.forEach(card => {
+        if (card.tags && Array.isArray(card.tags)) {
+            card.tags.forEach(tag => {
+                allTags.add(tag);
+                tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+            });
+        }
+    });
+    
+    const sortedTags = Array.from(allTags).sort();
+    
+    tagsContainer.innerHTML = sortedTags.map(tag => `
+        <button class="tag-btn" data-tag="${tag}">
+            <span>${tag}</span>
+            <span class="tag-count">${tagCounts[tag] || 0}</span>
+        </button>
+    `).join('');
+    
+    // Reconfigurar event listeners para as novas tags
+    tagsContainer.querySelectorAll('[data-tag]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const tag = btn.getAttribute('data-tag');
+            toggleTag(tag);
+        });
+    });
+}
+
+// Teclado
+function handleKeyboard(e) {
+    if (e.target.tagName === 'INPUT') return;
+    
+    switch(e.key) {
+        case 'ArrowLeft':
+        case 'ArrowUp':
+            e.preventDefault();
+            previousCard();
+            break;
+        case 'ArrowRight':
+        case 'ArrowDown':
+            e.preventDefault();
+            nextCard();
+            break;
+        case ' ':
+            e.preventDefault();
+            flipCard();
+            break;
+        case 'r':
+        case 'R':
+            if (!e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                showRandomCard();
+            }
+            break;
+        case 's':
+        case 'S':
+            if (!e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                toggleStudyMode();
+            }
+            break;
+        case 'e':
+        case 'E':
+            if (!e.ctrlKey && !e.metaKey) {
+                e.preventDefault();
+                toggleExplanation();
+            }
+            break;
+        case 'Escape':
+            if (appState.sidebarOpen && appState.isMobile) {
+                closeMobileSidebar();
+            }
+            break;
+    }
+    
+    // Teclas do modo estudo
+    if (studyMode && isFlipped) {
+        switch(e.key) {
+            case '1':
+                e.preventDefault();
+                answerCard('correct');
+                break;
+            case '2':
+                e.preventDefault();
+                answerCard('incorrect');
+                break;
+            case '3':
+                e.preventDefault();
+                answerCard('skipped');
+                break;
+        }
+    }
+}
+
+// Sistema responsivo
+function setupResponsive() {
+    handleResize();
+}
+
+function handleResize() {
+    const wasMobile = appState.isMobile;
+    appState.isMobile = window.innerWidth <= 768;
+    
+    if (wasMobile !== appState.isMobile) {
+        if (!appState.isMobile) {
+            // Desktop: fechar sidebar móvel se estava aberta
+            appState.sidebarOpen = false;
+        }
+        updateSidebarState();
+    }
+}
+
+// Atualização geral da UI
+function updateUI() {
+    updateCounters();
+    updateProgressBar();
+    updateSidebarActiveStates();
+    updateStudyModeUI();
+}
+
+// Utilitário para renderização de matemática
+function renderMathInElement(element) {
+    if (typeof renderMathInElement !== 'undefined' && window.katex) {
+        try {
+            window.renderMathInElement(element, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\[', right: '\\]', display: true},
+                    {left: '\\(', right: '\\)', display: false}
+                ],
+                throwOnError: false,
+                errorColor: '#cc0000',
+                strict: false
+            });
+        } catch (error) {
+            console.warn('Erro ao renderizar matemática:', error);
+        }
+    }
+}

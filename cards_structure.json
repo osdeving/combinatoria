@@ -11,7 +11,7 @@
                 "color": "#667eea"
             },
             "arranjo": {
-                "name": "Arranjo", 
+                "name": "Arranjo",
                 "description": "Seleção e ordenação de elementos (ordem importa)",
                 "icon": "📊",
                 "color": "#48bb78"
@@ -37,7 +37,7 @@
                 "color": "#48bb78"
             },
             "intermediario": {
-                "name": "Intermediário", 
+                "name": "Intermediário",
                 "description": "Aplicações práticas e cálculos mais complexos",
                 "icon": "🟡",
                 "color": "#ed8936"
@@ -45,7 +45,7 @@
             "avancado": {
                 "name": "Avançado",
                 "description": "Conceitos avançados e problemas desafiadores",
-                "icon": "🔴", 
+                "icon": "🔴",
                 "color": "#e53e3e"
             }
         }

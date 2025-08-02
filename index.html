@@ -13,87 +13,138 @@
         <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
     </head>
     <body>
-        <div class="container">
-            <!-- Header com navegação -->
-            <header class="header">
-                <h1 class="title">
-                    <span class="title-icon">🎯</span>
-                    Flashcards de Combinatória
-                </h1>
-                
-                <!-- Menu de categorias -->
-                <nav class="category-nav">
-                    <button class="category-btn active" data-category="all" onclick="setCategory('all')">
-                        <span class="category-icon">📚</span>
-                        <span class="category-name">Todas</span>
-                        <span class="category-count" id="count-all">37</span>
+        <div class="app-layout">
+            <!-- Sidebar lateral -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <h1 class="sidebar-title">
+                        <span class="title-icon">🎯</span>
+                        <div class="title-text">
+                            <span class="title-main">Flashcards</span>
+                            <span class="title-sub">Combinatória</span>
+                        </div>
+                    </h1>
+                    <button class="sidebar-toggle desktop-only" id="sidebarToggle" onclick="toggleSidebar()">
+                        <span>‹</span>
                     </button>
-                    <button class="category-btn" data-category="permutacao" onclick="setCategory('permutacao')">
-                        <span class="category-icon">🔄</span>
-                        <span class="category-name">Permutação</span>
-                        <span class="category-count" id="count-permutacao">12</span>
-                    </button>
-                    <button class="category-btn" data-category="arranjo" onclick="setCategory('arranjo')">
-                        <span class="category-icon">📊</span>
-                        <span class="category-name">Arranjo</span>
-                        <span class="category-count" id="count-arranjo">13</span>
-                    </button>
-                    <button class="category-btn" data-category="combinacao" onclick="setCategory('combinacao')">
-                        <span class="category-icon">🎯</span>
-                        <span class="category-name">Combinação</span>
-                        <span class="category-count" id="count-combinacao">12</span>
-                    </button>
-                </nav>
-                
-                <!-- Filtros de dificuldade -->
-                <div class="difficulty-filters">
-                    <label class="filter-label">Dificuldade:</label>
-                    <div class="difficulty-buttons">
-                        <button class="difficulty-btn active" data-difficulty="all" onclick="setDifficulty('all')">
-                            <span class="difficulty-icon">🎯</span>
-                            Todas
-                        </button>
-                        <button class="difficulty-btn" data-difficulty="basico" onclick="setDifficulty('basico')">
-                            <span class="difficulty-icon">🟢</span>
-                            Básico
-                        </button>
-                        <button class="difficulty-btn" data-difficulty="intermediario" onclick="setDifficulty('intermediario')">
-                            <span class="difficulty-icon">🟡</span>
-                            Intermediário
-                        </button>
-                    </div>
                 </div>
-                
-                <!-- Botão para mostrar busca em mobile -->
-                <button class="mobile-search-toggle" id="mobileSearchToggle" onclick="toggleMobileSearch()">
-                    <span class="btn-icon">🔍</span> Buscar
-                </button>
-                
-                <!-- Barra de busca e filtros avançados -->
-                <div class="search-section" id="searchSection">
-                    <div class="search-bar">
-                        <input type="text" 
-                               id="searchInput" 
-                               placeholder="Buscar em perguntas, respostas ou explicações..." 
-                               oninput="performSearch()"
-                               class="search-input">
-                        <button onclick="clearSearch()" class="search-clear" id="searchClear" style="display: none;">
-                            <span>✕</span>
-                        </button>
+
+                <!-- Menu de categorias -->
+                <nav class="sidebar-nav">
+                    <div class="nav-section">
+                        <h3 class="nav-section-title">📚 Categorias</h3>
+                        <div class="nav-buttons">
+                            <button class="nav-btn active" data-category="all" onclick="setCategory('all')">
+                                <span class="nav-icon">📚</span>
+                                <div class="nav-content">
+                                    <span class="nav-name">Todas as Categorias</span>
+                                    <span class="nav-desc">Todos os flashcards disponíveis</span>
+                                </div>
+                                <span class="nav-count" id="count-all">37</span>
+                            </button>
+                            <button class="nav-btn" data-category="permutacao" onclick="setCategory('permutacao')">
+                                <span class="nav-icon">🔄</span>
+                                <div class="nav-content">
+                                    <span class="nav-name">Permutação</span>
+                                    <span class="nav-desc">Ordenar todos os elementos</span>
+                                </div>
+                                <span class="nav-count" id="count-permutacao">12</span>
+                            </button>
+                            <button class="nav-btn" data-category="arranjo" onclick="setCategory('arranjo')">
+                                <span class="nav-icon">📊</span>
+                                <div class="nav-content">
+                                    <span class="nav-name">Arranjo</span>
+                                    <span class="nav-desc">A ordem importa</span>
+                                </div>
+                                <span class="nav-count" id="count-arranjo">13</span>
+                            </button>
+                            <button class="nav-btn" data-category="combinacao" onclick="setCategory('combinacao')">
+                                <span class="nav-icon">🎯</span>
+                                <div class="nav-content">
+                                    <span class="nav-name">Combinação</span>
+                                    <span class="nav-desc">A ordem não importa</span>
+                                </div>
+                                <span class="nav-count" id="count-combinacao">12</span>
+                            </button>
+                        </div>
                     </div>
-                    
+
+                    <!-- Filtros de dificuldade -->
+                    <div class="nav-section">
+                        <h3 class="nav-section-title">📈 Dificuldade</h3>
+                        <div class="nav-buttons difficulty-nav">
+                            <button class="nav-btn compact active" data-difficulty="all" onclick="setDifficulty('all')">
+                                <span class="nav-icon">🎯</span>
+                                <span class="nav-name">Todas</span>
+                            </button>
+                            <button class="nav-btn compact" data-difficulty="basico" onclick="setDifficulty('basico')">
+                                <span class="nav-icon">🟢</span>
+                                <span class="nav-name">Básico</span>
+                            </button>
+                            <button class="nav-btn compact" data-difficulty="intermediario" onclick="setDifficulty('intermediario')">
+                                <span class="nav-icon">🟡</span>
+                                <span class="nav-name">Intermediário</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Barra de busca -->
+                    <div class="nav-section">
+                        <h3 class="nav-section-title">🔍 Buscar</h3>
+                        <div class="search-container">
+                            <input type="text" 
+                                   id="searchInput" 
+                                   placeholder="Buscar flashcards..." 
+                                   oninput="performSearch()"
+                                   class="sidebar-search">
+                            <button onclick="clearSearch()" class="search-clear" id="searchClear" style="display: none;">
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Tags populares -->
-                    <div class="tags-section" id="tagsSection">
-                        <label class="filter-label">Tags populares:</label>
-                        <div class="tags-container" id="tagsContainer">
+                    <div class="nav-section">
+                        <h3 class="nav-section-title">🏷️ Tags Populares</h3>
+                        <div class="tags-grid" id="tagsContainer">
                             <!-- Tags serão carregadas dinamicamente -->
                         </div>
                     </div>
-                </div>
-            </header>
+
+                    <!-- Ações rápidas -->
+                    <div class="nav-section">
+                        <h3 class="nav-section-title">⚡ Ações</h3>
+                        <div class="nav-buttons">
+                            <button onclick="shuffleCards()" class="action-btn">
+                                <span class="nav-icon">🎲</span>
+                                <span class="nav-name">Embaralhar</span>
+                            </button>
+                            <button onclick="toggleStudyMode()" id="studyModeBtn" class="action-btn">
+                                <span class="nav-icon">🎯</span>
+                                <span class="nav-name">Modo Estudo</span>
+                            </button>
+                        </div>
+                    </div>
+                </nav>
+            </aside>
+
+            <!-- Overlay para mobile -->
+            <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
             <!-- Conteúdo principal -->
-            <div class="main-content">
+            <main class="main-content">
+                <!-- Header móvel (só aparece em telas pequenas) -->
+                <header class="mobile-header">
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                        <span>☰</span>
+                    </button>
+                    <h1 class="mobile-title">
+                        <span>🎯</span>
+                        Flashcards
+                    </h1>
+                    <div class="mobile-spacer"></div>
+                </header>
+
                 <!-- Barra de progresso visual -->
                 <div class="progress-section">
                     <div class="progress-info">
@@ -114,129 +165,85 @@
                     </div>
                     <div class="progress-percentage" id="progressPercentage">0%</div>
                 </div>
-            <div
-                class="flashcard"
-                id="flashcard"
-                tabindex="0"
-                aria-label="Flashcard"
-                role="button"
-            >
-                <div class="flashcard-inner">
-                    <div class="card-face card-front">
-                        <div class="question" id="question">
-                            Carregando pergunta...
+
+                <!-- Flashcard -->
+                <div class="flashcard" id="flashcard" tabindex="0" aria-label="Flashcard" role="button">
+                    <div class="flashcard-inner">
+                        <div class="card-face card-front">
+                            <div class="question" id="question">
+                                Carregando pergunta...
+                            </div>
+                        </div>
+                        <div class="card-face card-back">
+                            <div class="answer" id="answer"></div>
                         </div>
                     </div>
-                    <div class="card-face card-back">
-                        <div class="answer" id="answer"></div>
-                    </div>
                 </div>
-            </div>
+
+                <!-- Controles -->
                 <div class="controls">
-                    <button
-                        onclick="prevCard()"
-                        title="Anterior"
-                        aria-label="Anterior"
-                        class="btn btn-secondary"
-                    >
+                    <button onclick="prevCard()" title="Anterior" aria-label="Anterior" class="btn btn-secondary">
                         <span class="btn-icon">←</span> Anterior
                     </button>
-                    <button
-                        onclick="nextCard()"
-                        title="Próximo"
-                        aria-label="Próximo"
-                        class="btn btn-secondary"
-                    >
+                    <button onclick="nextCard()" title="Próximo" aria-label="Próximo" class="btn btn-secondary">
                         Próximo <span class="btn-icon">→</span>
                     </button>
-                    <button
-                        onclick="flipCard()"
-                        id="flipBtn"
-                        title="Mostrar resposta"
-                        aria-label="Mostrar resposta"
-                        class="btn btn-primary"
-                    >
+                    <button onclick="flipCard()" id="flipBtn" title="Mostrar resposta" aria-label="Mostrar resposta" class="btn btn-primary">
                         <span class="btn-icon">🔄</span> Mostrar resposta
                     </button>
-                    <button
-                        onclick="toggleReverse()"
-                        title="Inverter frente/verso"
-                        aria-label="Inverter"
-                        class="btn btn-secondary"
-                    >
+                    <button onclick="toggleReverse()" title="Inverter frente/verso" aria-label="Inverter" class="btn btn-secondary">
                         <span class="btn-icon">🔀</span> Inverter
-                    </button>
-                    <button
-                        onclick="shuffleCards()"
-                        title="Embaralhar"
-                        aria-label="Embaralhar"
-                        class="btn btn-secondary"
-                    >
-                        <span class="btn-icon">🎲</span> Embaralhar
-                    </button>
-                    <button
-                        onclick="toggleStudyMode()"
-                        id="studyModeBtn"
-                        title="Modo de estudo focado"
-                        aria-label="Modo estudo"
-                        class="btn btn-accent"
-                    >
-                        <span class="btn-icon">🎯</span> Modo Estudo
                     </button>
                 </div>
 
-                <!-- Painel de estatísticas -->
-                <div class="stats-panel" id="statsPanel">
-                    <div class="stats-header">
-                        <h3>📊 Estatísticas de Estudo</h3>
-                        <button onclick="toggleStatsPanel()" class="stats-close">✕</button>
-                    </div>
-                    <div class="stats-content">
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-value" id="totalCardsViewed">0</div>
-                                <div class="stat-label">Cards Visualizados</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value" id="studyTime">00:00</div>
-                                <div class="stat-label">Tempo de Estudo</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value" id="currentStreak">0</div>
-                                <div class="stat-label">Sequência Atual</div>
-                            </div>
+                <!-- Seção de Explicação -->
+                <div class="explanation-section">
+                    <button onclick="toggleExplanation()" id="explanationBtn" class="explanation-toggle btn btn-accent" title="Ver explicação detalhada">
+                        <span class="btn-icon">💡</span> Ver Explicação
+                    </button>
+                    <div class="explanation-content" id="explanationContent">
+                        <div class="explanation-text" id="explanationText">
+                            Clique em "Ver Explicação" para obter detalhes sobre este problema.
                         </div>
-                        
-                        <div class="categories-breakdown">
-                            <h4>📈 Por Categoria</h4>
-                            <div class="category-stats" id="categoryStats">
-                                <!-- Será preenchido dinamicamente -->
-                            </div>
-                        </div>
-                        
-                        <div class="study-actions">
-                            <button onclick="resetStats()" class="btn btn-secondary">
-                                <span class="btn-icon">🔄</span> Reset Estatísticas
-                            </button>
-                        </div>
-                    </div>
-                </div>            <!-- Seção de Explicação -->
-            <div class="explanation-section">
-                <button
-                    onclick="toggleExplanation()"
-                    id="explanationBtn"
-                    class="explanation-toggle btn btn-accent"
-                    title="Ver explicação detalhada"
-                >
-                    <span class="btn-icon">💡</span> Ver Explicação
-                </button>
-                <div class="explanation-content" id="explanationContent">
-                    <div class="explanation-text" id="explanationText">
-                        Clique em "Ver Explicação" para obter detalhes sobre
-                        este problema.
                     </div>
                 </div>
-            </div>
+            </main>
+
+            <!-- Painel de estatísticas -->
+            <div class="stats-panel" id="statsPanel">
+                <div class="stats-header">
+                    <h3>📊 Estatísticas de Estudo</h3>
+                    <button onclick="toggleStatsPanel()" class="stats-close">✕</button>
+                </div>
+                <div class="stats-content">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalCardsViewed">0</div>
+                            <div class="stat-label">Cards Visualizados</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="studyTime">00:00</div>
+                            <div class="stat-label">Tempo de Estudo</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="currentStreak">0</div>
+                            <div class="stat-label">Sequência Atual</div>
+                        </div>
+                    </div>
+                    
+                    <div class="categories-breakdown">
+                        <h4>📈 Por Categoria</h4>
+                        <div class="category-stats" id="categoryStats">
+                            <!-- Será preenchido dinamicamente -->
+                        </div>
+                    </div>
+                    
+                    <div class="study-actions">
+                        <button onclick="resetStats()" class="btn btn-secondary">
+                            <span class="btn-icon">🔄</span> Reset Estatísticas
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
         <script src="script.js"></script>

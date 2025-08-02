@@ -62,7 +62,7 @@ if command -v python3 &> /dev/null; then
     echo
     python3 -m http.server 8000
 elif command -v python &> /dev/null; then
-    echo "📍 Servidor rodando em: http://localhost:8000"  
+    echo "📍 Servidor rodando em: http://localhost:8000"
     echo "   Pressione Ctrl+C para parar"
     echo
     python -m SimpleHTTPServer 8000
