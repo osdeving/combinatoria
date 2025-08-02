@@ -711,17 +711,21 @@ body {
 }
 
 .explanation-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: none;
     background: var(--surface);
     border-radius: var(--radius-lg);
     border: 1px solid var(--border);
+    margin-top: 1rem;
 }
 
 .explanation-content.show {
-    max-height: 500px;
-    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .explanation-text {

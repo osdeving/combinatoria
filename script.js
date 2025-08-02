@@ -29,7 +29,7 @@ let appState = {
 // Inicialização simplificada
 document.addEventListener("DOMContentLoaded", function () {
     console.log("DOM carregado, iniciando aplicação...");
-    
+
     // Inicializar imediatamente
     setTimeout(() => {
         console.log("Carregando flashcards...");
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
         setupEventListeners();
         setupResponsive();
     }, 100);
-});// Carregamento dos dados
+}); // Carregamento dos dados
 async function loadFlashcards() {
     try {
         const response = await fetch("cards.json");
@@ -569,7 +569,7 @@ function updateExplanation(card) {
     if (!explanationText || !explanationBtn) {
         console.log("Elementos de explicação não encontrados:", {
             explanationText: !!explanationText,
-            explanationBtn: !!explanationBtn
+            explanationBtn: !!explanationBtn,
         });
         return;
     }
@@ -583,7 +583,8 @@ function updateExplanation(card) {
         console.log("Nenhuma explicação encontrada para esta carta");
         explanationBtn.style.display = "none";
         appState.showExplanation = false;
-        const explanationContent = document.getElementById("explanationContent");
+        const explanationContent =
+            document.getElementById("explanationContent");
         if (explanationContent) {
             explanationContent.classList.remove("show");
         }
@@ -1001,21 +1002,29 @@ window.toggleReverse = function () {
 };
 
 window.toggleExplanation = function () {
-    console.log("Toggle explicação chamado");
+    console.log("=== TOGGLE EXPLANATION DEBUG ===");
+    console.log("Estado anterior:", appState.showExplanation);
+    
     appState.showExplanation = !appState.showExplanation;
+    console.log("Novo estado:", appState.showExplanation);
+    
     const explanationContent = document.getElementById("explanationContent");
     const explanationBtn = document.getElementById("explanationBtn");
-
-    console.log("Estado da explicação:", appState.showExplanation);
+    
     console.log("Elementos encontrados:", {
         explanationContent: !!explanationContent,
-        explanationBtn: !!explanationBtn
+        explanationBtn: !!explanationBtn,
     });
-
+    
     if (explanationContent) {
+        console.log("Classes antes:", explanationContent.classList.toString());
+        console.log("Display antes:", explanationContent.style.display);
+        
         explanationContent.classList.toggle("show", appState.showExplanation);
-        // Também usar display como fallback
         explanationContent.style.display = appState.showExplanation ? "block" : "none";
+        
+        console.log("Classes depois:", explanationContent.classList.toString());
+        console.log("Display depois:", explanationContent.style.display);
     }
 
     if (explanationBtn) {
@@ -1025,6 +1034,7 @@ window.toggleExplanation = function () {
             icon.textContent = appState.showExplanation ? "📖" : "💡";
         }
     }
+    console.log("=== FIM DEBUG ===");
 };
 
 window.toggleStatsPanel = function () {
