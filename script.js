@@ -26,24 +26,11 @@ let appState = {
     isMobile: window.innerWidth <= 768,
 };
 
-// Inicialização
+// Inicialização (otimizada)
 document.addEventListener("DOMContentLoaded", function () {
-    // Aguarda um pouco mais para garantir que todos os scripts carregaram
-    setTimeout(() => {
-        loadFlashcards();
-        setupEventListeners();
-        setupResponsive();
-        updateUI();
-    }, 200);
-});
-
-// Também aguarda o carregamento completo da janela
-window.addEventListener("load", function () {
-    console.log(
-        "Window loaded, KaTeX disponível:",
-        !!window.katex,
-        !!window.renderMathInElement
-    );
+    loadFlashcards();
+    setupEventListeners();
+    setupResponsive();
 });
 
 // Carregamento dos dados
@@ -62,7 +49,7 @@ async function loadFlashcards() {
 
         updateCounters();
         updateProgressBar();
-        showRandomCard();
+        showCard(0);
         renderSidebarContent();
     } catch (error) {
         console.error("Erro ao carregar flashcards:", error);
@@ -403,7 +390,7 @@ function handleAction(action) {
     }
 }
 
-// Navegação de cartas
+// Navegação de cartas (otimizada)
 function showCard(index) {
     if (!currentData || currentData.length === 0) {
         showNoCardsMessage();
@@ -422,7 +409,6 @@ function showCard(index) {
     }
 
     const flashcard = document.querySelector(".flashcard");
-    const flashcardInner = document.querySelector(".flashcard-inner");
     const questionEl = document.querySelector(".question");
     const answerEl = document.querySelector(".answer");
 
@@ -435,19 +421,22 @@ function showCard(index) {
     isFlipped = false;
     flashcard.classList.remove("flipped");
 
-    // Update content
-    questionEl.innerHTML = card.q || card.question || "Pergunta não disponível";
-    answerEl.innerHTML = card.a || card.answer || "Resposta não disponível";
+    // Update content - usar as propriedades corretas do JSON
+    const question = card.q || card.question || "Pergunta não disponível";
+    const answer = card.a || card.answer || "Resposta não disponível";
+    
+    questionEl.innerHTML = question;
+    answerEl.innerHTML = answer;
 
-    // Render math
-    renderMathInElement(questionEl);
-    renderMathInElement(answerEl);
+    // Render math apenas se KaTeX estiver disponível
+    if (window.katex && window.renderMathInElement) {
+        renderMathInElement(questionEl);
+        renderMathInElement(answerEl);
+    }
 
-    // Update category color
+    // Update card styling
     const cardFront = document.querySelector(".card-front");
-    const cardBack = document.querySelector(".card-back");
-
-    if (cardFront) {
+    if (cardFront && card.category) {
         cardFront.style.borderColor = getCategoryColor(card.category);
     }
 
@@ -927,94 +916,33 @@ function handleResize() {
     }
 }
 
-// Atualização geral da UI
+// Atualização geral da UI (otimizada)
 function updateUI() {
-    updateCounters();
-    updateProgressBar();
     updateSidebarActiveStates();
     updateStudyModeUI();
 }
 
-// Utilitário para renderização de matemática
+// Utilitário para renderização de matemática (otimizado)
 function renderMathInElement(element) {
-    if (!element) return;
-    
-    console.log("Tentando renderizar matemática no elemento:", element);
-    console.log("Conteúdo do elemento:", element.innerHTML);
-    console.log("KaTeX disponível:", !!window.katex);
-    console.log("renderMathInElement disponível:", !!window.renderMathInElement);
-    
-    const doRender = () => {
-        if (window.katex && window.renderMathInElement) {
-            try {
-                console.log("Iniciando renderização...");
-                window.renderMathInElement(element, {
-                    delimiters: [
-                        { left: "$$", right: "$$", display: true },
-                        { left: "$", right: "$", display: false },
-                        { left: "\\[", right: "\\]", display: true },
-                        { left: "\\(", right: "\\)", display: false },
-                    ],
-                    throwOnError: false,
-                    errorColor: "#cc0000",
-                    strict: false,
-                });
-                console.log("Renderização concluída. Novo conteúdo:", element.innerHTML);
-            } catch (error) {
-                console.error("Erro ao renderizar matemática:", error);
-            }
-        } else {
-            console.log("KaTeX ainda não disponível, tentando novamente...");
-            setTimeout(doRender, 50);
-        }
-    };
-    
-    // Tentar imediatamente e também com delay
-    doRender();
-    setTimeout(doRender, 200);
-    setTimeout(doRender, 500);
-}// Função de teste para debug
-function testMath() {
-    console.log("=== TESTE DIRETO DE MATEMÁTICA ===");
-    console.log("window.katex:", window.katex);
-    console.log("window.renderMathInElement:", window.renderMathInElement);
-    console.log("Tipo renderMathInElement:", typeof window.renderMathInElement);
+    if (!element || !window.katex || !window.renderMathInElement) return;
 
-    const questionEl = document.querySelector(".question");
-    if (questionEl) {
-        questionEl.innerHTML =
-            "Teste: $x^2 + y^2 = z^2$ e $$\\int_0^1 x dx = \\frac{1}{2}$$";
-        console.log("Conteúdo inserido:", questionEl.innerHTML);
-
-        // Tentar diferentes formas de acessar a função
-        let renderFunc = window.renderMathInElement || renderMathInElement;
-
-        if (renderFunc && window.katex) {
-            console.log("Usando função de renderização:", renderFunc);
-            try {
-                renderFunc(questionEl, {
-                    delimiters: [
-                        { left: "$$", right: "$$", display: true },
-                        { left: "$", right: "$", display: false },
-                    ],
-                    throwOnError: false,
-                });
-                console.log("Após renderização:", questionEl.innerHTML);
-            } catch (e) {
-                console.error("Erro na renderização:", e);
-            }
-        } else {
-            console.log("Função de renderização não encontrada!");
-            console.log(
-                "Todas as propriedades window:",
-                Object.keys(window).filter((k) => k.includes("render"))
-            );
-        }
+    try {
+        window.renderMathInElement(element, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\[", right: "\\]", display: true },
+                { left: "\\(", right: "\\)", display: false },
+            ],
+            throwOnError: false,
+            errorColor: "#cc0000",
+            strict: false,
+        });
+    } catch (error) {
+        console.error("Erro ao renderizar matemática:", error);
     }
-}
-
-// Adicionar ao escopo global para acesso via console
-window.testMath = testMath;
+}// Função simplificada para debug (removida para otimização)
+// window.testMath e window.forceRenderMath removidas
 
 // Funções de wrapper para compatibilidade com HTML
 function setCategory(category) {
@@ -1022,7 +950,7 @@ function setCategory(category) {
 }
 
 function setDifficulty(difficulty) {
-    if (difficulty === 'all') difficulty = 'todas';
+    if (difficulty === "all") difficulty = "todas";
     setActiveDifficulty(difficulty);
 }
 
@@ -1030,83 +958,20 @@ function shuffleCards() {
     showRandomCard();
 }
 
-function toggleReverse() {
-    // Implementar inversão de frente/verso se necessário
-    console.log("Função toggleReverse não implementada ainda");
-}
-
 function performSearch() {
-    const input = document.getElementById('searchInput');
+    const input = document.querySelector(".sidebar-search");
     if (input) {
         handleSearch({ target: input });
     }
 }
 
 function clearSearch() {
-    const input = document.getElementById('searchInput');
+    const input = document.querySelector(".sidebar-search");
+    const clearBtn = document.querySelector(".search-clear");
     if (input) {
-        input.value = '';
-        appState.activeSearch = '';
+        input.value = "";
+        appState.activeSearch = "";
         applyFilters();
-        
-        const clearBtn = document.getElementById('searchClear');
-        if (clearBtn) {
-            clearBtn.style.display = 'none';
-        }
+        if (clearBtn) clearBtn.style.display = "none";
     }
 }
-
-function toggleStatsPanel() {
-    const statsPanel = document.getElementById('statsPanel');
-    if (statsPanel) {
-        statsPanel.classList.toggle('open');
-        updateStatsPanel();
-    }
-}
-
-function resetStats() {
-    sessionStats = {
-        correct: 0,
-        incorrect: 0,
-        skipped: 0,
-        startTime: Date.now(),
-        studyTime: 0
-    };
-    updateStatsPanel();
-}
-
-function toggleSidebar() {
-    if (appState.isMobile) {
-        toggleMobileSidebar();
-    } else {
-        const sidebar = document.getElementById('sidebar');
-        if (sidebar) {
-            sidebar.classList.toggle('collapsed');
-        }
-    }
-}
-
-// Função simplificada para forçar renderização
-function forceRenderMath() {
-    console.log("=== FORÇANDO RENDERIZAÇÃO ===");
-    if (window.renderMathInElement && window.katex) {
-        try {
-            window.renderMathInElement(document.body, {
-                delimiters: [
-                    { left: "$$", right: "$$", display: true },
-                    { left: "$", right: "$", display: false },
-                ],
-                throwOnError: false
-            });
-            console.log("Renderização forçada concluída");
-        } catch (e) {
-            console.error("Erro na renderização forçada:", e);
-        }
-    } else {
-        console.log("KaTeX não disponível para renderização forçada");
-    }
-}
-
-// Tornar as funções globais
-window.testMath = testMath;
-window.forceRenderMath = forceRenderMath;
