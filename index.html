@@ -348,42 +348,6 @@
             </div>
         </div>
 
-        <!-- Teste de LaTeX isolado (canto da página) -->
-        <div
-            id="latex-test"
-            style="
-                position: fixed;
-                top: 10px;
-                right: 10px;
-                background: #fff;
-                border: 2px solid #333;
-                padding: 10px;
-                z-index: 9999;
-                font-size: 12px;
-                max-width: 200px;
-            "
-        >
-            <div style="font-weight: bold; margin-bottom: 5px">
-                Teste LaTeX:
-            </div>
-            <div id="test-content">$x^2 + y^2 = z^2$</div>
-            <div style="margin-top: 5px">
-                <button onclick="testLatexNow()" style="font-size: 10px">
-                    Testar Agora
-                </button>
-                <button
-                    onclick="document.getElementById('latex-test').style.display='none'"
-                    style="font-size: 10px"
-                >
-                    Fechar
-                </button>
-            </div>
-            <div
-                id="test-result"
-                style="margin-top: 5px; font-size: 10px; color: #666"
-            ></div>
-        </div>
-
         <!-- Scripts KaTeX -->
         <script src="lib/katex.min.js"></script>
         <script src="lib/auto-render.min.js"></script>

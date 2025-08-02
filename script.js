@@ -26,46 +26,6 @@ let appState = {
     isMobile: window.innerWidth <= 768,
 };
 
-// Função de teste isolado de LaTeX
-function testLatexNow() {
-    const testContent = document.getElementById("test-content");
-    const testResult = document.getElementById("test-result");
-
-    if (!testContent || !testResult) return;
-
-    // Resetar conteúdo
-    testContent.innerHTML =
-        "$x^2 + y^2 = z^2$ e $$\\int_0^1 x dx = \\frac{1}{2}$$";
-
-    // Verificar disponibilidade
-    const katexAvailable = !!window.katex;
-    const renderAvailable = !!window.renderMathInElement;
-
-    testResult.innerHTML = `KaTeX: ${katexAvailable ? "✓" : "✗"}, Render: ${
-        renderAvailable ? "✓" : "✗"
-    }`;
-
-    if (katexAvailable && renderAvailable) {
-        try {
-            window.renderMathInElement(testContent, {
-                delimiters: [
-                    { left: "$$", right: "$$", display: true },
-                    { left: "$", right: "$", display: false },
-                ],
-                throwOnError: false,
-            });
-            testResult.innerHTML += " - Renderizado!";
-        } catch (e) {
-            testResult.innerHTML += ` - Erro: ${e.message}`;
-        }
-    } else {
-        testResult.innerHTML += " - Bibliotecas não carregadas";
-    }
-}
-
-// Tornar a função global
-window.testLatexNow = testLatexNow;
-
 // Inicialização simplificada
 document.addEventListener("DOMContentLoaded", function () {
     console.log("DOM carregado, iniciando aplicação...");
@@ -76,13 +36,8 @@ document.addEventListener("DOMContentLoaded", function () {
         loadFlashcards();
         setupEventListeners();
         setupResponsive();
-        
-        // Testar LaTeX
-        setTimeout(testLatexNow, 1000);
     }, 100);
-});
-
-// Carregamento dos dados
+});// Carregamento dos dados
 async function loadFlashcards() {
     try {
         const response = await fetch("cards.json");
@@ -608,21 +563,27 @@ function toggleExplanation() {
 }
 
 function updateExplanation(card) {
-    const explanationText = document.querySelector(".explanation-text");
+    const explanationText = document.getElementById("explanationText");
     const explanationBtn = document.getElementById("explanationBtn");
 
-    if (!explanationText || !explanationBtn) return;
+    if (!explanationText || !explanationBtn) {
+        console.log("Elementos de explicação não encontrados:", {
+            explanationText: !!explanationText,
+            explanationBtn: !!explanationBtn
+        });
+        return;
+    }
 
     if (card.explanation && card.explanation.trim()) {
+        console.log("Mostrando explicação:", card.explanation);
         explanationBtn.style.display = "inline-flex";
         explanationText.innerHTML = card.explanation;
         renderMathContent(explanationText);
     } else {
+        console.log("Nenhuma explicação encontrada para esta carta");
         explanationBtn.style.display = "none";
         appState.showExplanation = false;
-        const explanationContent = document.querySelector(
-            ".explanation-content"
-        );
+        const explanationContent = document.getElementById("explanationContent");
         if (explanationContent) {
             explanationContent.classList.remove("show");
         }
@@ -994,73 +955,86 @@ function renderMathContent(element) {
 // window.testMath e window.forceRenderMath removidas
 
 // Funções globais para o HTML
-window.setCategory = function(category) {
-    if(typeof setActiveCategory === 'function') {
+window.setCategory = function (category) {
+    if (typeof setActiveCategory === "function") {
         setActiveCategory(category);
     }
 };
 
-window.setDifficulty = function(difficulty) {
+window.setDifficulty = function (difficulty) {
     if (difficulty === "all") difficulty = "todas";
-    if(typeof setActiveDifficulty === 'function') {
+    if (typeof setActiveDifficulty === "function") {
         setActiveDifficulty(difficulty);
     }
 };
 
-window.shuffleCards = function() {
-    if(typeof showRandomCard === 'function') {
+window.shuffleCards = function () {
+    if (typeof showRandomCard === "function") {
         showRandomCard();
     }
 };
 
-window.prevCard = function() {
-    if(typeof previousCard === 'function') {
+window.prevCard = function () {
+    if (typeof previousCard === "function") {
         previousCard();
     }
 };
 
-window.nextCard = function() {
+window.nextCard = function () {
     if (currentData.length === 0) return;
     currentCardIndex = (currentCardIndex + 1) % currentData.length;
-    if(typeof showCard === 'function') {
+    if (typeof showCard === "function") {
         showCard(currentCardIndex);
     }
 };
 
-window.flipCard = function() {
+window.flipCard = function () {
     const flashcard = document.querySelector(".flashcard");
-    if(flashcard) {
+    if (flashcard) {
         isFlipped = !isFlipped;
         flashcard.classList.toggle("flipped", isFlipped);
     }
 };
 
-window.toggleReverse = function() {
+window.toggleReverse = function () {
     console.log("Função toggleReverse não implementada");
 };
 
-window.toggleExplanation = function() {
+window.toggleExplanation = function () {
+    console.log("Toggle explicação chamado");
     appState.showExplanation = !appState.showExplanation;
-    const explanationContent = document.querySelector(".explanation-content");
+    const explanationContent = document.getElementById("explanationContent");
     const explanationBtn = document.getElementById("explanationBtn");
+
+    console.log("Estado da explicação:", appState.showExplanation);
+    console.log("Elementos encontrados:", {
+        explanationContent: !!explanationContent,
+        explanationBtn: !!explanationBtn
+    });
 
     if (explanationContent) {
         explanationContent.classList.toggle("show", appState.showExplanation);
+        // Também usar display como fallback
+        explanationContent.style.display = appState.showExplanation ? "block" : "none";
     }
 
     if (explanationBtn) {
         explanationBtn.classList.toggle("active", appState.showExplanation);
+        const icon = explanationBtn.querySelector(".btn-icon");
+        if (icon) {
+            icon.textContent = appState.showExplanation ? "📖" : "💡";
+        }
     }
 };
 
-window.toggleStatsPanel = function() {
+window.toggleStatsPanel = function () {
     const statsPanel = document.querySelector(".stats-panel");
     if (statsPanel) {
         statsPanel.classList.toggle("open");
     }
 };
 
-window.resetStats = function() {
+window.resetStats = function () {
     sessionStats = {
         correct: 0,
         incorrect: 0,
@@ -1070,9 +1044,9 @@ window.resetStats = function() {
     };
 };
 
-window.toggleSidebar = function() {
+window.toggleSidebar = function () {
     if (appState.isMobile) {
-        if(typeof toggleMobileSidebar === 'function') {
+        if (typeof toggleMobileSidebar === "function") {
             toggleMobileSidebar();
         }
     } else {
@@ -1083,7 +1057,7 @@ window.toggleSidebar = function() {
     }
 };
 
-window.toggleStudyMode = function() {
+window.toggleStudyMode = function () {
     studyMode = !studyMode;
     const studyBtn = document.getElementById("studyModeBtn");
     if (studyBtn) {
@@ -1091,20 +1065,20 @@ window.toggleStudyMode = function() {
     }
 };
 
-window.performSearch = function() {
+window.performSearch = function () {
     const input = document.querySelector(".sidebar-search");
-    if (input && typeof handleSearch === 'function') {
+    if (input && typeof handleSearch === "function") {
         handleSearch({ target: input });
     }
 };
 
-window.clearSearch = function() {
+window.clearSearch = function () {
     const input = document.querySelector(".sidebar-search");
     const clearBtn = document.querySelector(".search-clear");
     if (input) {
         input.value = "";
         appState.activeSearch = "";
-        if (typeof applyFilters === 'function') {
+        if (typeof applyFilters === "function") {
             applyFilters();
         }
         if (clearBtn) clearBtn.style.display = "none";
