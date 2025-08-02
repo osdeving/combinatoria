@@ -313,8 +313,8 @@ function applyFilters() {
     if (appState.activeSearch) {
         filtered = filtered.filter((card) => {
             const searchIn = [
-                card.question,
-                card.answer,
+                card.q || card.question || "",
+                card.a || card.answer || "",
                 card.explanation || "",
                 ...(card.tags || []),
             ]
@@ -424,8 +424,8 @@ function showCard(index) {
     flashcard.classList.remove("flipped");
 
     // Update content
-    questionEl.innerHTML = card.question || "Pergunta não disponível";
-    answerEl.innerHTML = card.answer || "Resposta não disponível";
+    questionEl.innerHTML = card.q || card.question || "Pergunta não disponível";
+    answerEl.innerHTML = card.a || card.answer || "Resposta não disponível";
 
     // Render math
     renderMathInElement(questionEl);
@@ -681,7 +681,8 @@ function updateCounters() {
     const difficultyCounters = {
         todas: allCards.length,
         basico: allCards.filter((c) => c.difficulty === "basico").length,
-        intermediario: allCards.filter((c) => c.difficulty === "intermediario").length,
+        intermediario: allCards.filter((c) => c.difficulty === "intermediario")
+            .length,
     };
 
     // Atualizar elementos na sidebar
