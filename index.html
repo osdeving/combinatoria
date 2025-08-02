@@ -63,6 +63,28 @@
                         </button>
                     </div>
                 </div>
+                
+                <!-- Barra de busca e filtros avançados -->
+                <div class="search-section">
+                    <div class="search-bar">
+                        <input type="text" 
+                               id="searchInput" 
+                               placeholder="Buscar em perguntas, respostas ou explicações..." 
+                               oninput="performSearch()"
+                               class="search-input">
+                        <button onclick="clearSearch()" class="search-clear" id="searchClear" style="display: none;">
+                            <span>✕</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Tags populares -->
+                    <div class="tags-section" id="tagsSection">
+                        <label class="filter-label">Tags populares:</label>
+                        <div class="tags-container" id="tagsContainer">
+                            <!-- Tags serão carregadas dinamicamente -->
+                        </div>
+                    </div>
+                </div>
             </header>
 
             <!-- Conteúdo principal -->

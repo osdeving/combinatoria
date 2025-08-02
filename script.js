@@ -7,7 +7,8 @@ let explanationVisible = false;
 let currentFilter = {
     category: 'all',
     difficulty: 'all',
-    tags: []
+    tags: [],
+    search: ''
 };
 
 async function loadCards() {
@@ -60,6 +61,19 @@ function applyFilters() {
         filteredCards = filteredCards.filter(card => 
             currentFilter.tags.some(tag => card.tags && card.tags.includes(tag))
         );
+    }
+    
+    // Filtrar por busca de texto
+    if (currentFilter.search.trim() !== '') {
+        const searchTerm = currentFilter.search.toLowerCase().trim();
+        filteredCards = filteredCards.filter(card => {
+            const searchableText = (
+                (card.q || '') + ' ' + 
+                (card.a || '') + ' ' + 
+                (card.explanation || '')
+            ).toLowerCase();
+            return searchableText.includes(searchTerm);
+        });
     }
     
     cards = filteredCards;
@@ -256,10 +270,95 @@ function updateCategoryCounts() {
     });
 }
 
-renderMathInCard();
+    renderMathInCard();
 }
 
-function nextCard() {
+// Funções de busca
+function performSearch() {
+    const searchInput = document.getElementById('searchInput');
+    const searchClear = document.getElementById('searchClear');
+    
+    currentFilter.search = searchInput.value;
+    
+    // Mostrar/esconder botão de limpar
+    if (currentFilter.search.trim()) {
+        searchClear.style.display = 'block';
+    } else {
+        searchClear.style.display = 'none';
+    }
+    
+    applyFilters();
+    current = 0;
+    showCard();
+}
+
+function clearSearch() {
+    const searchInput = document.getElementById('searchInput');
+    const searchClear = document.getElementById('searchClear');
+    
+    searchInput.value = '';
+    currentFilter.search = '';
+    searchClear.style.display = 'none';
+    
+    applyFilters();
+    current = 0; 
+    showCard();
+}
+
+// Funções de tags
+function toggleTag(tag) {
+    const tagIndex = currentFilter.tags.indexOf(tag);
+    
+    if (tagIndex === -1) {
+        currentFilter.tags.push(tag);
+    } else {
+        currentFilter.tags.splice(tagIndex, 1);
+    }
+    
+    updateTagButtons();
+    applyFilters();
+    current = 0;
+    showCard();
+}
+
+function updateTagButtons() {
+    document.querySelectorAll('.tag-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (currentFilter.tags.includes(btn.dataset.tag)) {
+            btn.classList.add('active');
+        }
+    });
+}
+
+function loadPopularTags() {
+    if (!cardsData.cards) return;
+    
+    // Contar ocorrências de cada tag
+    const tagCounts = {};
+    cardsData.cards.forEach(card => {
+        if (card.tags) {
+            card.tags.forEach(tag => {
+                tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+            });
+        }
+    });
+    
+    // Ordenar tags por popularidade e pegar as top 10
+    const popularTags = Object.entries(tagCounts)
+        .sort(([,a], [,b]) => b - a)
+        .slice(0, 10);
+    
+    // Renderizar tags
+    const tagsContainer = document.getElementById('tagsContainer');
+    if (tagsContainer) {
+        tagsContainer.innerHTML = popularTags.map(([tag, count]) => `
+            <button class="tag-btn" data-tag="${tag}" onclick="toggleTag('${tag}')">
+                <span>${tag.replace(/-/g, ' ')}</span>
+                <span class="tag-count">${count}</span>
+            </button>
+        `).join('');
+    }
+}function nextCard() {
     current = (current + 1) % cards.length;
     showCard();
 }
@@ -313,5 +412,6 @@ window.onload = function() {
         updateCategoryButtons();
         updateDifficultyButtons();
         updateCategoryCounts();
+        loadPopularTags();
     }, 100);
 };
