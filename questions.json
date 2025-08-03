@@ -1,0 +1,131 @@
+{
+    "metadata": {
+        "version": "1.0",
+        "totalQuestions": 8,
+        "lastUpdated": "2025-08-02",
+        "vestibulares": {
+            "enem": {
+                "name": "ENEM",
+                "description": "Exame Nacional do Ensino Médio",
+                "color": "#e53e3e",
+                "count": 3
+            },
+            "fuvest": {
+                "name": "FUVEST",
+                "description": "Fundação Universitária para o Vestibular",
+                "color": "#3182ce",
+                "count": 2
+            },
+            "unicamp": {
+                "name": "UNICAMP",
+                "description": "Universidade Estadual de Campinas",
+                "color": "#38a169",
+                "count": 2
+            },
+            "ita": {
+                "name": "ITA",
+                "description": "Instituto Tecnológico de Aeronáutica",
+                "color": "#805ad5",
+                "count": 1
+            }
+        }
+    },
+    "questions": [
+        {
+            "id": 1,
+            "vestibular": "enem",
+            "year": 2023,
+            "difficulty": "intermediario",
+            "category": "permutacao",
+            "tags": ["anagramas", "palavra"],
+            "question": "Quantos anagramas da palavra BRASIL têm as vogais sempre juntas?",
+            "options": ["48", "240", "720", "120", "60"],
+            "correctAnswer": 3,
+            "explanation": "**Estratégia:** Tratar as vogais (AI) como um bloco único. **Passo 1:** Considerar o bloco (AI) como uma única unidade, temos: B-R-S-(AI)-L = 5 elementos. **Passo 2:** Permutações de 5 elementos = $5! = 120$. **Passo 3:** Dentro do bloco, as vogais A e I podem ser permutadas de $2! = 2$ maneiras. **Resultado:** $5! \\times 2! = 120 \\times 2 = 240$ anagramas."
+        },
+        {
+            "id": 2,
+            "vestibular": "fuvest",
+            "year": 2022,
+            "difficulty": "avancado",
+            "category": "combinacao",
+            "tags": ["comissao", "grupos"],
+            "question": "De quantas maneiras pode-se formar uma comissão de 5 pessoas escolhidas entre 8 homens e 6 mulheres, de modo que na comissão haja pelo menos 2 mulheres?",
+            "options": ["1848", "2002", "1716", "1638", "1800"],
+            "correctAnswer": 0,
+            "explanation": "**Método:** Usar o complementar (total - casos sem restrição). **Total de maneiras:** $C(14,5) = \\frac{14!}{5! \\cdot 9!} = 2002$. **Casos com 0 mulheres:** $C(8,5) = 56$. **Casos com 1 mulher:** $C(6,1) \\times C(8,4) = 6 \\times 70 = 420$. **Casos inválidos:** $56 + 420 = 476$. **Resposta:** $2002 - 154 = 1848$ maneiras."
+        },
+        {
+            "id": 3,
+            "vestibular": "unicamp",
+            "year": 2023,
+            "difficulty": "intermediario",
+            "category": "arranjo",
+            "tags": ["codigo", "repeticao"],
+            "question": "Quantos códigos de 4 dígitos podem ser formados usando os algarismos 1, 2, 3, 4, 5, sem repetição, de modo que o código seja um número par?",
+            "options": ["48", "60", "72", "96", "120"],
+            "correctAnswer": 0,
+            "explanation": "**Condição:** Número par → último dígito deve ser 2 ou 4. **Caso 1 - Termina em 2:** Temos 4 posições restantes para preencher com {1,3,4,5}, sem repetição = $A(4,3) = 24$. **Caso 2 - Termina em 4:** Temos 4 posições restantes para preencher com {1,2,3,5}, sem repetição = $A(4,3) = 24$. **Total:** $24 + 24 = 48$ códigos."
+        },
+        {
+            "id": 4,
+            "vestibular": "enem",
+            "year": 2022,
+            "difficulty": "basico",
+            "category": "principios",
+            "tags": ["princípio-multiplicativo"],
+            "question": "Um restaurante oferece 3 tipos de entrada, 4 tipos de prato principal e 2 tipos de sobremesa. De quantas maneiras diferentes um cliente pode fazer seu pedido completo?",
+            "options": ["9", "12", "18", "24", "36"],
+            "correctAnswer": 3,
+            "explanation": "**Princípio Multiplicativo:** Para cada escolha da entrada, temos 4 opções de prato principal, e para cada uma dessas, temos 2 opções de sobremesa. **Cálculo:** $3 \\text{ entradas} \\times 4 \\text{ pratos principais} \\times 2 \\text{ sobremesas} = 24$ maneiras diferentes."
+        },
+        {
+            "id": 5,
+            "vestibular": "ita",
+            "year": 2023,
+            "difficulty": "avancado",
+            "category": "permutacao",
+            "tags": ["permutacao-circular", "restricoes"],
+            "question": "De quantas maneiras 6 pessoas podem se sentar em uma mesa redonda, sabendo que 2 pessoas específicas não podem ficar lado a lado?",
+            "options": ["72", "48", "96", "60", "84"],
+            "correctAnswer": 0,
+            "explanation": "**Permutação Circular:** $(n-1)! = 5! = 120$ (total). **Restrição:** Calcular casos onde as 2 pessoas ficam juntas. **Pessoas juntas:** Tratar como 1 bloco → $(5-1)! = 4! = 24$ arranjos do conjunto. **Dentro do bloco:** $2! = 2$ arranjos internos. **Casos proibidos:** $24 \\times 2 = 48$. **Resposta:** $120 - 48 = 72$ maneiras."
+        },
+        {
+            "id": 6,
+            "vestibular": "fuvest",
+            "year": 2023,
+            "difficulty": "intermediario",
+            "category": "combinacao",
+            "tags": ["triangulo-pascal", "binomial"],
+            "question": "No desenvolvimento de $(x + 2y)^8$, qual é o coeficiente do termo $x^5y^3$?",
+            "options": ["448", "896", "224", "1792", "336"],
+            "correctAnswer": 0,
+            "explanation": "**Binômio de Newton:** $(x + 2y)^8 = \\sum_{k=0}^{8} C(8,k) \\cdot x^{8-k} \\cdot (2y)^k$. **Termo desejado:** $x^5y^3$ → $8-k=5$ → $k=3$. **Coeficiente:** $C(8,3) \\cdot 2^3 = 56 \\cdot 8 = 448$. **Verificação:** $C(8,3) = \\frac{8!}{3! \\cdot 5!} = \\frac{8 \\times 7 \\times 6}{3 \\times 2 \\times 1} = 56$."
+        },
+        {
+            "id": 7,
+            "vestibular": "unicamp",
+            "year": 2022,
+            "difficulty": "avancado",
+            "category": "arranjo",
+            "tags": ["senha", "restricoes"],
+            "question": "Quantas senhas de 6 dígitos podem ser formadas usando apenas os dígitos 0, 1, 2, 3, se a senha não pode começar com 0 e deve ter pelo menos um dígito repetido?",
+            "options": ["3072", "2880", "3456", "2916", "3240"],
+            "correctAnswer": 0,
+            "explanation": "**Total sem restrição de repetição:** Primeira posição: 3 opções (1,2,3). Demais: 4 opções cada = $3 \\times 4^5 = 3072$. **Casos sem repetição:** Primeira: 3 opções. Segunda: 3 opções (não pode repetir a primeira). Terceira: 2 opções, etc. = $3 \\times 3 \\times 2 \\times 1 \\times 0 = 0$ (impossível ter 6 dígitos diferentes com apenas 4 algarismos). **Resposta:** Como não é possível ter 6 dígitos diferentes, todas as 3072 senhas têm pelo menos um repetido."
+        },
+        {
+            "id": 8,
+            "vestibular": "enem",
+            "year": 2021,
+            "difficulty": "basico",
+            "category": "combinacao",
+            "tags": ["grupos", "escolha"],
+            "question": "Em uma turma de 12 alunos, de quantas maneiras pode-se escolher 3 alunos para formar um grupo de estudos?",
+            "options": ["220", "1320", "144", "36", "432"],
+            "correctAnswer": 0,
+            "explanation": "**Combinação Simples:** A ordem não importa na formação do grupo. **Fórmula:** $C(n,p) = \\frac{n!}{p!(n-p)!}$. **Cálculo:** $C(12,3) = \\frac{12!}{3! \\times 9!} = \\frac{12 \\times 11 \\times 10}{3 \\times 2 \\times 1} = \\frac{1320}{6} = 220$ maneiras."
+        }
+    ]
+}

@@ -6,6 +6,12 @@
     --secondary-light: #a0aec0;
     --accent-color: #48bb78;
     --accent-dark: #38a169;
+    --success-color: #48bb78;
+    --success-light: #c6f6d5;
+    --error-color: #f56565;
+    --error-light: #fed7d7;
+    --warning-color: #ed8936;
+    --warning-light: #fbd38d;
     --background: #f7fafc;
     --surface: #ffffff;
     --surface-hover: #edf2f7;
@@ -1114,31 +1120,31 @@ body {
         transform: none;
         box-shadow: var(--shadow-sm);
     }
-    
+
     .btn:active {
         transform: scale(0.98);
         transition: transform 0.1s ease;
     }
-    
+
     .nav-btn:hover {
         background: var(--surface-hover);
         transform: none;
     }
-    
+
     .nav-btn:active {
         background: var(--primary-color);
         color: white;
         transform: scale(0.98);
     }
-    
+
     .flashcard:hover {
         transform: none;
     }
-    
+
     .flashcard:active {
         transform: scale(0.99);
     }
-    
+
     .mobile-menu-btn:active {
         transform: scale(0.95);
         background: var(--primary-hover);
@@ -1147,11 +1153,15 @@ body {
 
 /* Improve tap targets for mobile */
 @media (max-width: 768px) {
-    .btn, .nav-btn, .mobile-menu-btn, .search-clear, .tag-btn {
+    .btn,
+    .nav-btn,
+    .mobile-menu-btn,
+    .search-clear,
+    .tag-btn {
         min-height: 44px;
         min-width: 44px;
     }
-    
+
     .stats-close {
         min-height: 44px;
         min-width: 44px;
@@ -1208,6 +1218,652 @@ body {
     font-size: 1.1em !important;
 }
 
+/* ========================================
+   SISTEMA DE QUESTÕES
+   ======================================== */
+
+/* Seção de questões */
+.question-section {
+    display: none;
+}
+
+/* Display da questão */
+.question-display {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+/* Cabeçalho da questão */
+.question-header {
+    background: linear-gradient(
+        135deg,
+        var(--primary-color),
+        var(--primary-dark)
+    );
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.question-counter {
+    font-size: 1.1rem;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.question-info {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* Badges */
+.vestibular-badge,
+.year-badge,
+.difficulty-badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+}
+
+.difficulty-badge.difficulty-fácil {
+    background: var(--success-color);
+}
+
+.difficulty-badge.difficulty-médio {
+    background: var(--warning-color);
+}
+
+.difficulty-badge.difficulty-difícil {
+    background: var(--error-color);
+}
+
+/* Conteúdo da questão */
+.question-content {
+    padding: 2rem;
+}
+
+.question-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    color: var(--text-primary);
+}
+
+/* Opções da questão */
+.question-options {
+    margin-bottom: 2rem;
+}
+
+.question-option {
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.question-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.question-option label {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+    background: var(--surface);
+}
+
+.question-option label:hover {
+    border-color: var(--primary-color);
+    background: var(--surface-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.question-option input:checked + label {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: white;
+}
+
+.question-option input:disabled + label {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.option-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: var(--secondary-light);
+    color: white;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+
+.question-option input:checked + label .option-letter {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.option-text {
+    flex: 1;
+    line-height: 1.6;
+}
+
+/* Ações da questão */
+.question-actions {
+    padding: 0 2rem 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.submit-btn {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    min-width: 140px;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background: var(--accent-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Resultado */
+.question-result {
+    margin: 1.5rem 2rem 0;
+    padding: 1rem;
+    border-radius: var(--radius);
+    display: none;
+}
+
+.result-message {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+}
+
+.result-message.correct {
+    background: var(--success-light);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}
+
+.result-message.incorrect {
+    background: var(--error-light);
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
+}
+
+.result-icon {
+    font-size: 1.25rem;
+}
+
+/* Explicação no resultado */
+.result-explanation {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--surface-hover);
+    border-radius: var(--radius);
+    border-left: 4px solid var(--accent-color);
+}
+
+.result-explanation h4 {
+    margin: 0 0 0.75rem 0;
+    color: var(--accent-color);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.explanation-content {
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+/* Explicação */
+.question-explanation {
+    margin: 1.5rem 2rem 2rem;
+    padding: 1.5rem;
+    background: var(--surface-hover);
+    border-radius: var(--radius);
+    border-left: 4px solid var(--accent-color);
+    display: none;
+}
+
+.question-explanation h4 {
+    margin: 0 0 1rem 0;
+    color: var(--accent-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.explanation-content {
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+/* Controles das questões */
+.question-controls {
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Botões de modo */
+.mode-switch {
+    margin-bottom: 1.5rem;
+}
+
+.mode-switch .nav-btn.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Mensagem de erro */
+.error-message {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-secondary);
+}
+
+.error-message h3 {
+    color: var(--error-color);
+    margin-bottom: 1rem;
+}
+
+/* Responsividade para questões */
+@media (max-width: 768px) {
+    .question-header {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .question-counter {
+        width: 100%;
+        order: -1;
+        font-size: 1rem;
+    }
+
+    .question-info {
+        justify-content: center;
+    }
+
+    .question-content {
+        padding: 1.5rem;
+    }
+
+    .question-text {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .question-option label {
+        padding: 0.875rem;
+        gap: 0.75rem;
+    }
+
+    .option-letter {
+        width: 1.75rem;
+        height: 1.75rem;
+        font-size: 0.8rem;
+    }
+
+    .question-actions {
+        padding: 0 1.5rem 1.5rem;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    .question-result,
+    .question-explanation {
+        margin-left: 1.5rem;
+        margin-right: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .vestibular-badge,
+    .year-badge,
+    .difficulty-badge {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .question-option label {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+
+    .option-letter {
+        align-self: center;
+    }
+}
+
 .katex-display {
     margin: 0.5em 0 !important;
+}
+
+/* ========================================
+   SEÇÃO DE TEORIA
+   ======================================== */
+
+/* Seção principal da teoria */
+.theory-section {
+    display: none;
+    background: var(--background);
+    min-height: 100vh;
+}
+
+/* Cabeçalho da teoria */
+.theory-header {
+    background: linear-gradient(
+        135deg,
+        var(--primary-color),
+        var(--primary-dark)
+    );
+    color: white;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+}
+
+.theory-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+}
+
+.theory-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+/* Conteúdo da teoria */
+.theory-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Tópicos da teoria */
+.theory-topic {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+}
+
+.theory-topic h2 {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.theory-text {
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+.theory-text p {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+/* Resumo Final - Estilo especial como na imagem */
+.final-summary {
+    background: #1a1a1a; /* Fundo escuro como na imagem */
+    color: #ffffff;
+    border: none;
+    padding: 2.5rem;
+}
+
+.final-summary h2 {
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+}
+
+/* Grid de fórmulas - duas colunas */
+.formulas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Coluna das fórmulas */
+.formulas-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Coluna das descrições */
+.descriptions-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Itens das fórmulas */
+.formula-item {
+    display: flex;
+    align-items: center;
+    min-height: 60px;
+    padding: 0.5rem 0;
+}
+
+.formula-label {
+    font-size: 1rem;
+    color: #ffffff;
+}
+
+.formula-math {
+    font-size: 1.1rem;
+    color: #ffffff;
+    font-family: "Times New Roman", serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* Frações */
+.fraction {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border-top: 1px solid #ffffff;
+    padding-top: 0.2rem;
+    margin: 0 0.2rem;
+    line-height: 1.1;
+}
+
+/* Coeficientes binomiais */
+.binom {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #ffffff;
+    border-radius: 8px;
+    padding: 0.3rem 0.5rem;
+    margin: 0 0.2rem;
+    font-size: 0.9em;
+}
+
+.binom-n {
+    font-size: 0.9rem;
+    line-height: 1;
+}
+
+.binom-p {
+    font-size: 0.9rem;
+    line-height: 1;
+    border-top: 1px solid #ffffff;
+    padding-top: 0.2rem;
+    margin-top: 0.2rem;
+}
+
+/* Itens das descrições */
+.description-item {
+    display: flex;
+    align-items: center;
+    min-height: 60px;
+    padding: 0.5rem 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: #ffffff;
+}
+
+.description-item.empty {
+    min-height: 30px; /* Espaço vazio para alinhar com a primeira fórmula */
+}
+
+/* Destaques coloridos como na imagem */
+.highlight-red {
+    color: #ff6b6b;
+    font-weight: 500;
+}
+
+.highlight-green {
+    color: #51cf66;
+    font-weight: 500;
+}
+
+/* Subscrito e sobrescrito */
+sub {
+    font-size: 0.8em;
+    vertical-align: sub;
+}
+
+sup {
+    font-size: 0.8em;
+    vertical-align: super;
+}
+
+/* Itálico para variáveis */
+em {
+    font-style: italic;
+    font-weight: normal;
+}
+
+/* Responsividade para teoria */
+@media (max-width: 768px) {
+    .theory-header {
+        padding: 1.5rem;
+        margin: 0 -1rem 2rem -1rem;
+        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+
+    .theory-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .theory-header p {
+        font-size: 1rem;
+    }
+
+    .theory-topic {
+        padding: 1.5rem;
+        margin: 0 -1rem 2rem -1rem;
+        border-radius: var(--radius);
+    }
+
+    .final-summary {
+        margin: 0 -1rem;
+        border-radius: var(--radius);
+        padding: 1.5rem;
+    }
+
+    .formulas-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .descriptions-column {
+        order: -1; /* Descrições primeiro no mobile */
+    }
+
+    .formula-item,
+    .description-item {
+        min-height: auto;
+        padding: 0.75rem 0;
+    }
+
+    .formula-math {
+        font-size: 1rem;
+    }
+
+    .description-item {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .theory-header h1 {
+        font-size: 1.3rem;
+    }
+
+    .theory-topic h2 {
+        font-size: 1.3rem;
+    }
+
+    .final-summary h2 {
+        font-size: 1.5rem;
+    }
+
+    .formula-math {
+        font-size: 0.95rem;
+    }
+
+    .fraction,
+    .binom {
+        font-size: 0.85rem;
+    }
 }

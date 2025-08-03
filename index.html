@@ -178,6 +178,37 @@
                             </button>
                         </div>
                     </div>
+
+                    <!-- Modo de Visualização -->
+                    <div class="nav-section">
+                        <h3 class="nav-section-title">📋 Modo</h3>
+                        <div class="nav-buttons mode-nav">
+                            <button
+                                class="nav-btn compact active"
+                                id="flashcardModeBtn"
+                                onclick="switchToFlashcards()"
+                            >
+                                <span class="nav-icon">🃏</span>
+                                <span class="nav-name">Flashcards</span>
+                            </button>
+                            <button
+                                class="nav-btn compact"
+                                id="questionModeBtn"
+                                onclick="switchToQuestions()"
+                            >
+                                <span class="nav-icon">📝</span>
+                                <span class="nav-name">Questões</span>
+                            </button>
+                            <button
+                                class="nav-btn compact"
+                                id="theoryModeBtn"
+                                onclick="switchToTheory()"
+                            >
+                                <span class="nav-icon">📖</span>
+                                <span class="nav-name">Teoria</span>
+                            </button>
+                        </div>
+                    </div>
                 </nav>
             </aside>
 
@@ -203,7 +234,7 @@
                 </header>
 
                 <!-- Barra de progresso visual -->
-                <div class="progress-section">
+                <div class="progress-section" id="progressSection">
                     <div class="progress-info">
                         <div class="progress-text" id="progress">
                             Card 1 de 37
@@ -227,78 +258,423 @@
                     </div>
                 </div>
 
-                <!-- Flashcard -->
-                <div
-                    class="flashcard"
-                    id="flashcard"
-                    tabindex="0"
-                    aria-label="Flashcard"
-                    role="button"
-                >
-                    <div class="flashcard-inner">
-                        <div class="card-face card-front">
-                            <div class="question" id="question">
-                                Carregando pergunta...
+                <!-- SEÇÃO DE FLASHCARDS -->
+                <div class="flashcard-section" id="flashcardSection">
+                    <!-- Flashcard -->
+                    <div
+                        class="flashcard"
+                        id="flashcard"
+                        tabindex="0"
+                        aria-label="Flashcard"
+                        role="button"
+                    >
+                        <div class="flashcard-inner">
+                            <div class="card-face card-front">
+                                <div class="question" id="question">
+                                    Carregando pergunta...
+                                </div>
+                            </div>
+                            <div class="card-face card-back">
+                                <div class="answer" id="answer"></div>
                             </div>
                         </div>
-                        <div class="card-face card-back">
-                            <div class="answer" id="answer"></div>
+                    </div>
+
+                    <!-- Controles dos Flashcards -->
+                    <div class="controls" id="flashcardControls">
+                        <button
+                            onclick="prevCard()"
+                            title="Anterior"
+                            aria-label="Anterior"
+                            class="btn btn-secondary"
+                        >
+                            <span class="btn-icon">←</span> Anterior
+                        </button>
+                        <button
+                            onclick="nextCard()"
+                            title="Próximo"
+                            aria-label="Próximo"
+                            class="btn btn-secondary"
+                        >
+                            Próximo <span class="btn-icon">→</span>
+                        </button>
+                        <button
+                            onclick="flipCard()"
+                            id="flipBtn"
+                            title="Mostrar resposta"
+                            aria-label="Mostrar resposta"
+                            class="btn btn-primary"
+                        >
+                            <span class="btn-icon">🔄</span> Mostrar resposta
+                        </button>
+                        <button
+                            onclick="toggleReverse()"
+                            title="Inverter frente/verso"
+                            aria-label="Inverter"
+                            class="btn btn-secondary"
+                        >
+                            <span class="btn-icon">🔀</span> Inverter
+                        </button>
+                    </div>
+
+                    <!-- Seção de Explicação dos Flashcards -->
+                    <div class="explanation-section">
+                        <button
+                            onclick="toggleExplanation()"
+                            id="explanationBtn"
+                            class="explanation-toggle btn btn-accent"
+                            title="Ver explicação detalhada"
+                        >
+                            <span class="btn-icon">💡</span> Ver Explicação
+                        </button>
+                        <div
+                            class="explanation-content"
+                            id="explanationContent"
+                        >
+                            <div class="explanation-text" id="explanationText">
+                                Clique em "Ver Explicação" para obter detalhes
+                                sobre este problema.
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Controles -->
-                <div class="controls">
-                    <button
-                        onclick="prevCard()"
-                        title="Anterior"
-                        aria-label="Anterior"
-                        class="btn btn-secondary"
+                <!-- SEÇÃO DE QUESTÕES DE VESTIBULAR -->
+                <div
+                    class="question-section"
+                    id="questionSection"
+                    style="display: none"
+                >
+                    <div class="question-header">
+                        <div class="question-info">
+                            <span
+                                class="question-vestibular"
+                                id="questionVestibular"
+                                >ENEM</span
+                            >
+                            <span class="question-year" id="questionYear"
+                                >2023</span
+                            >
+                            <span
+                                class="question-difficulty"
+                                id="questionDifficulty"
+                                >Intermediário</span
+                            >
+                        </div>
+                        <div class="question-counter" id="questionCounter">
+                            Questão 1 de 8
+                        </div>
+                    </div>
+
+                    <div class="question-content">
+                        <div class="question-text" id="questionText">
+                            Carregando questão...
+                        </div>
+
+                        <div class="question-options" id="questionOptions">
+                            <!-- Opções serão carregadas dinamicamente -->
+                        </div>
+
+                        <div class="question-actions">
+                            <button
+                                class="btn btn-primary"
+                                id="submitAnswerBtn"
+                                onclick="submitAnswer()"
+                                disabled
+                            >
+                                <span class="btn-icon">✓</span> Responder
+                            </button>
+                            <button
+                                class="btn btn-secondary"
+                                id="skipQuestionBtn"
+                                onclick="skipQuestion()"
+                            >
+                                <span class="btn-icon">→</span> Pular
+                            </button>
+                        </div>
+
+                        <div
+                            class="question-result"
+                            id="questionResult"
+                            style="display: none"
+                        >
+                            <div class="result-header">
+                                <span class="result-icon" id="resultIcon"
+                                    >✓</span
+                                >
+                                <span class="result-text" id="resultText"
+                                    >Correto!</span
+                                >
+                            </div>
+                            <div
+                                class="result-explanation"
+                                id="resultExplanation"
+                            >
+                                <!-- Explicação será carregada aqui -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Controles das Questões -->
+                    <div
+                        class="controls question-controls"
+                        id="questionControls"
                     >
-                        <span class="btn-icon">←</span> Anterior
-                    </button>
-                    <button
-                        onclick="nextCard()"
-                        title="Próximo"
-                        aria-label="Próximo"
-                        class="btn btn-secondary"
-                    >
-                        Próximo <span class="btn-icon">→</span>
-                    </button>
-                    <button
-                        onclick="flipCard()"
-                        id="flipBtn"
-                        title="Mostrar resposta"
-                        aria-label="Mostrar resposta"
-                        class="btn btn-primary"
-                    >
-                        <span class="btn-icon">🔄</span> Mostrar resposta
-                    </button>
-                    <button
-                        onclick="toggleReverse()"
-                        title="Inverter frente/verso"
-                        aria-label="Inverter"
-                        class="btn btn-secondary"
-                    >
-                        <span class="btn-icon">🔀</span> Inverter
-                    </button>
+                        <button
+                            onclick="prevQuestion()"
+                            title="Questão Anterior"
+                            aria-label="Questão Anterior"
+                            class="btn btn-secondary"
+                        >
+                            <span class="btn-icon">←</span> Anterior
+                        </button>
+                        <button
+                            onclick="nextQuestion()"
+                            title="Próxima Questão"
+                            aria-label="Próxima Questão"
+                            class="btn btn-secondary"
+                        >
+                            Próxima <span class="btn-icon">→</span>
+                        </button>
+                        <button
+                            onclick="randomQuestion()"
+                            title="Questão Aleatória"
+                            aria-label="Questão Aleatória"
+                            class="btn btn-accent"
+                        >
+                            <span class="btn-icon">🎲</span> Aleatória
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Seção de Explicação -->
-                <!-- Seção de Explicação -->
-                <div class="explanation-section">
-                    <button
-                        onclick="toggleExplanation()"
-                        id="explanationBtn"
-                        class="explanation-toggle btn btn-accent"
-                        title="Ver explicação detalhada"
-                    >
-                        <span class="btn-icon">💡</span> Ver Explicação
-                    </button>
-                    <div class="explanation-content" id="explanationContent">
-                        <div class="explanation-text" id="explanationText">
-                            Clique em "Ver Explicação" para obter detalhes sobre
-                            este problema.
+                <!-- SEÇÃO DE TEORIA -->
+                <div
+                    class="theory-section"
+                    id="theorySection"
+                    style="display: none"
+                >
+                    <div class="theory-header">
+                        <h1>📖 Teoria de Combinatória</h1>
+                        <p>Conceitos fundamentais e fórmulas essenciais</p>
+                    </div>
+
+                    <div class="theory-content">
+                        <!-- Seção de Introdução -->
+                        <div class="theory-topic">
+                            <h2>📚 Introdução</h2>
+                            <div class="theory-text">
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur
+                                    adipiscing elit. Sed do eiusmod tempor
+                                    incididunt ut labore et dolore magna aliqua.
+                                    Ut enim ad minim veniam, quis nostrud
+                                    exercitation ullamco laboris nisi ut aliquip
+                                    ex ea commodo consequat.
+                                </p>
+                                <p>
+                                    Duis aute irure dolor in reprehenderit in
+                                    voluptate velit esse cillum dolore eu fugiat
+                                    nulla pariatur. Excepteur sint occaecat
+                                    cupidatat non proident, sunt in culpa qui
+                                    officia deserunt mollit anim id est laborum.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Seção de Conceitos Básicos -->
+                        <div class="theory-topic">
+                            <h2>🔢 Conceitos Básicos</h2>
+                            <div class="theory-text">
+                                <p>
+                                    Sed ut perspiciatis unde omnis iste natus
+                                    error sit voluptatem accusantium doloremque
+                                    laudantium, totam rem aperiam, eaque ipsa
+                                    quae ab illo inventore veritatis et quasi
+                                    architecto beatae vitae dicta sunt
+                                    explicabo.
+                                </p>
+                                <p>
+                                    Nemo enim ipsam voluptatem quia voluptas sit
+                                    aspernatur aut odit aut fugit, sed quia
+                                    consequuntur magni dolores eos qui ratione
+                                    voluptatem sequi nesciunt.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Resumo Final - Exatamente como na imagem -->
+                        <div class="theory-topic final-summary">
+                            <h2>📋 Resumo Final</h2>
+                            <div class="formulas-grid">
+                                <!-- Coluna Esquerda - Fórmulas -->
+                                <div class="formulas-column">
+                                    <div class="formula-item">
+                                        <span class="formula-label"
+                                            >Seja <em>A</em> um conjunto com
+                                            <em>n</em> elementos.</span
+                                        >
+                                    </div>
+
+                                    <div class="formula-item">
+                                        <span class="formula-math"
+                                            >P(n) = n!</span
+                                        >
+                                    </div>
+
+                                    <div class="formula-item">
+                                        <span class="formula-math"
+                                            >A(n,n) =
+                                            <span class="fraction"
+                                                >n!<br />(n-n)!</span
+                                            >
+                                            =
+                                            <span class="fraction"
+                                                >n!<br />0!</span
+                                            >
+                                            =
+                                            <span class="fraction"
+                                                >n!<br />1</span
+                                            >
+                                            = n! = P(n)</span
+                                        >
+                                    </div>
+
+                                    <div class="formula-item">
+                                        <span class="formula-math"
+                                            >A(n,p) =
+                                            <span class="fraction"
+                                                >n!<br />(n-p)!</span
+                                            ></span
+                                        >
+                                    </div>
+
+                                    <div class="formula-item">
+                                        <span class="formula-math"
+                                            >C(n,p) =
+                                            <span class="binom"
+                                                >(<span class="binom-n">n</span
+                                                ><br /><span class="binom-p"
+                                                    >p</span
+                                                >)</span
+                                            >
+                                            =
+                                            <span class="fraction"
+                                                >A(n,p)<br />p!</span
+                                            >
+                                            =
+                                            <span class="fraction"
+                                                >n!<br />p!</span
+                                            >
+                                            =
+                                            <span class="fraction"
+                                                >n!<br />(n-p)! · p!</span
+                                            >
+                                            =
+                                            <span class="fraction"
+                                                >n!<br />p!(n-p)!</span
+                                            ></span
+                                        >
+                                    </div>
+
+                                    <div class="formula-item">
+                                        <span class="formula-math"
+                                            >P<sub>rep</sub>(n) =
+                                            <span class="fraction"
+                                                >n!<br />r₁! · r₂! · ... ·
+                                                rₖ!</span
+                                            ></span
+                                        >
+                                    </div>
+
+                                    <div class="formula-item">
+                                        <span class="formula-math"
+                                            >A<sub>rep</sub>(n,p) = n<sup
+                                                >p</sup
+                                            ></span
+                                        >
+                                    </div>
+
+                                    <div class="formula-item">
+                                        <span class="formula-math"
+                                            >C<sub>rep</sub>(n,p) =
+                                            <span class="binom"
+                                                >(<span class="binom-n"
+                                                    >n+p-1</span
+                                                ><br /><span class="binom-p"
+                                                    >p</span
+                                                >)</span
+                                            >
+                                            =
+                                            <span class="fraction"
+                                                >(n+p-1)!<br />p!(n-1)!</span
+                                            ></span
+                                        >
+                                    </div>
+                                </div>
+
+                                <!-- Coluna Direita - Descrições -->
+                                <div class="descriptions-column">
+                                    <div class="description-item empty"></div>
+
+                                    <div class="description-item">
+                                        todas ordenações de <em>A</em>
+                                        <span class="highlight-red"
+                                            >excluindo elementos repetidos</span
+                                        >, tais como {1,1} ou {2,2,2}, etc..
+                                    </div>
+
+                                    <div class="description-item">
+                                        todas ordenações de <em>n</em> elementos
+                                        de <em>A</em>
+                                        <span class="highlight-red"
+                                            >excluindo elementos repetidos</span
+                                        >, tais como {1,1} ou {2,2,2}, etc..
+                                    </div>
+
+                                    <div class="description-item">
+                                        todas ordenações de <em>p</em> elementos
+                                        de <em>A</em>
+                                        <span class="highlight-red"
+                                            >excluindo elementos repetidos</span
+                                        >, tais como {1,1} ou {2,2,2}, etc..
+                                    </div>
+
+                                    <div class="description-item">
+                                        todas ordenações de <em>p</em> elementos
+                                        de <em>A</em> onde
+                                        <span class="highlight-red"
+                                            >ordem não importa</span
+                                        >, p.ex: {a,b} = {b,a}.
+                                    </div>
+
+                                    <div class="description-item">
+                                        todas as ordenações de <em>A</em>
+                                        <span class="highlight-red"
+                                            >excluindo elementos repetidos</span
+                                        >, p.ex: se {a,a,a,b,b,c} então {a,b,c}
+                                        e r₁ = 3 e r₂ = 2, (3 a's e 2 b's)
+                                    </div>
+
+                                    <div class="description-item">
+                                        todas ordenações de <em>p</em> elementos
+                                        de <em>A</em>
+                                        <span class="highlight-green"
+                                            >com elementos repetidos</span
+                                        >, tais como {1,1} ou {2,2,2}, etc..
+                                    </div>
+
+                                    <div class="description-item">
+                                        todas ordenações de <em>p</em> elementos
+                                        de <em>A</em> onde
+                                        <span class="highlight-red"
+                                            >ordem não importa</span
+                                        >, p.ex: {a,b} = {b,a} .
+                                        <span class="highlight-green"
+                                            >com elementos repetidos</span
+                                        >, tais como {1,1} ou {2,2,2}, etc..
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
